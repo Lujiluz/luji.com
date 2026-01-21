@@ -3,50 +3,166 @@
 
 @custom-variant dark (&:is(.dark *));
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-  --color-sidebar-ring: var(--sidebar-ring);
-  --color-sidebar-border: var(--sidebar-border);
-  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
-  --color-sidebar-accent: var(--sidebar-accent);
-  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
-  --color-sidebar-primary: var(--sidebar-primary);
-  --color-sidebar-foreground: var(--sidebar-foreground);
-  --color-sidebar: var(--sidebar);
-  --color-chart-5: var(--chart-5);
-  --color-chart-4: var(--chart-4);
-  --color-chart-3: var(--chart-3);
-  --color-chart-2: var(--chart-2);
-  --color-chart-1: var(--chart-1);
-  --color-ring: var(--ring);
-  --color-input: var(--input);
-  --color-border: var(--border);
-  --color-destructive: var(--destructive);
-  --color-accent-foreground: var(--accent-foreground);
-  --color-accent: var(--accent);
-  --color-muted-foreground: var(--muted-foreground);
-  --color-muted: var(--muted);
-  --color-secondary-foreground: var(--secondary-foreground);
-  --color-secondary: var(--secondary);
-  --color-primary-foreground: var(--primary-foreground);
-  --color-primary: var(--primary);
-  --color-popover-foreground: var(--popover-foreground);
-  --color-popover: var(--popover);
-  --color-card-foreground: var(--card-foreground);
-  --color-card: var(--card);
-  --radius-sm: calc(var(--radius) - 4px);
-  --radius-md: calc(var(--radius) - 2px);
-  --radius-lg: var(--radius);
-  --radius-xl: calc(var(--radius) + 4px);
-  --radius-2xl: calc(var(--radius) + 8px);
-  --radius-3xl: calc(var(--radius) + 12px);
-  --radius-4xl: calc(var(--radius) + 16px);
+@theme {
+  /* ===============================
+     Fonts
+  =============================== */
+  --font-sans: "DM Sans", system-ui, sans-serif;
+  --font-display: "Outfit", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", monospace;
+  /* === LIGHT MODE TOKENS === */
+  /* Soft, warm, organic - NOT sterile white */
+
+  /* Backgrounds - Creamy warm tones */
+  --background: 45 30% 96%;
+  --foreground: 30 8% 18%;
+
+  /* Surfaces - Subtle warmth */
+  --surface-elevated: 45 25% 99%;
+  --surface-subtle: 40 20% 94%;
+  --surface-muted: 38 18% 91%;
+
+  /* Card surfaces */
+  --card: 42 22% 97%;
+  --card-foreground: 30 8% 18%;
+
+  /* Popover */
+  --popover: 45 25% 99%;
+  --popover-foreground: 30 8% 18%;
+
+  /* Primary - Warm charcoal */
+  --primary: 30 6% 22%;
+  --primary-foreground: 45 30% 96%;
+
+  /* Secondary - Soft stone */
+  --secondary: 38 12% 90%;
+  --secondary-foreground: 30 8% 25%;
+
+  /* Muted tones */
+  --muted: 40 14% 88%;
+  --muted-foreground: 30 5% 45%;
+
+  /* Accent - Warm sage green */
+  --accent: 158 25% 45%;
+  --accent-foreground: 0 0% 100%;
+
+  /* Destructive */
+  --destructive: 0 55% 50%;
+  --destructive-foreground: 0 0% 100%;
+
+  /* Borders and inputs */
+  --border: 40 15% 85%;
+  --input: 40 15% 85%;
+  --ring: 158 25% 45%;
+
+  --radius: 0.75rem;
+
+  /* Text hierarchy */
+  --text-primary: 30 8% 18%;
+  --text-secondary: 30 5% 42%;
+  --text-tertiary: 30 4% 55%;
+
+  /* Accent variants */
+  --accent-muted: 158 20% 92%;
+  --accent-strong: 158 30% 38%;
+
+  /* Status colors */
+  --success: 158 35% 42%;
+  --success-muted: 158 25% 92%;
+
+  /* Sidebar */
+  --sidebar-background: 42 22% 95%;
+  --sidebar-foreground: 30 8% 18%;
+  --sidebar-primary: 30 6% 22%;
+  --sidebar-primary-foreground: 45 30% 96%;
+  --sidebar-accent: 38 12% 90%;
+  --sidebar-accent-foreground: 30 8% 25%;
+  --sidebar-border: 40 15% 85%;
+  --sidebar-ring: 158 25% 45%;
+
+  /* Liquid glass effect */
+  --glass-bg: 45 30% 98% / 0.7;
+  --glass-border: 40 20% 80% / 0.4;
+  --glass-shadow: 30 10% 20% / 0.08;
 }
 
-:root {
+@theme inline {
+  --animate-spotlight: spotlight 2s ease 0.75s 1 forwards;
+}
+
+@layer utilities {
+  .text-text-primary {
+    color: hsl(var(--text-primary));
+  }
+
+  .text-text-secondary {
+    color: hsl(var(--text-secondary));
+  }
+
+  .text-text-tertiary {
+    color: hsl(var(--text-tertiary));
+  }
+
+  .bg-surface-elevated {
+    background-color: hsl(var(--surface-elevated));
+  }
+
+  .bg-surface-subtle {
+    background-color: hsl(var(--surface-subtle));
+  }
+
+  .bg-surface-muted {
+    background-color: hsl(var(--surface-muted));
+  }
+
+  .bg-accent-muted {
+    background-color: hsl(var(--accent-muted));
+  }
+
+  .text-accent-strong {
+    color: hsl(var(--accent-strong));
+  }
+
+  .bg-success-muted {
+    background-color: hsl(var(--success-muted));
+  }
+
+  .text-success {
+    color: hsl(var(--success));
+  }
+}
+
+@layer components {
+  .section-container {
+    @apply max-w-5xl mx-auto px-6 lg:px-8;
+  }
+
+  .section-spacing {
+    @apply py-20 lg:py-28;
+  }
+
+  .text-gradient {
+    @apply bg-gradient-to-r from-text-primary to-text-secondary bg-clip-text text-transparent;
+  }
+
+  .card-elevated {
+    @apply bg-surface-elevated border border-border rounded-xl shadow-sm;
+  }
+
+  .card-subtle {
+    @apply bg-surface-subtle border border-border/50 rounded-xl;
+  }
+
+  .badge-accent {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-accent-muted text-accent-strong font-mono;
+  }
+
+  .badge-success {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-md text-xs font-medium bg-success-muted text-success font-mono;
+  }
+}
+
+/* :root {
   --radius: 0.625rem;
   --background: oklch(1 0 0);
   --foreground: oklch(0.141 0.005 285.823);
@@ -79,47 +195,180 @@
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.705 0.015 286.067);
-}
+} */
+
+/* --------------------------------------------------
+   Dark Mode Overrides
+-------------------------------------------------- */
 
 .dark {
-  --background: oklch(0.141 0.005 285.823);
-  --foreground: oklch(0.985 0 0);
-  --card: oklch(0.21 0.006 285.885);
-  --card-foreground: oklch(0.985 0 0);
-  --popover: oklch(0.21 0.006 285.885);
-  --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.92 0.004 286.32);
-  --primary-foreground: oklch(0.21 0.006 285.885);
-  --secondary: oklch(0.274 0.006 286.033);
-  --secondary-foreground: oklch(0.985 0 0);
-  --muted: oklch(0.274 0.006 286.033);
-  --muted-foreground: oklch(0.705 0.015 286.067);
-  --accent: oklch(0.274 0.006 286.033);
-  --accent-foreground: oklch(0.985 0 0);
-  --destructive: oklch(0.704 0.191 22.216);
-  --border: oklch(1 0 0 / 10%);
-  --input: oklch(1 0 0 / 15%);
-  --ring: oklch(0.552 0.016 285.938);
-  --chart-1: oklch(0.488 0.243 264.376);
-  --chart-2: oklch(0.696 0.17 162.48);
-  --chart-3: oklch(0.769 0.188 70.08);
-  --chart-4: oklch(0.627 0.265 303.9);
-  --chart-5: oklch(0.645 0.246 16.439);
-  --sidebar: oklch(0.21 0.006 285.885);
-  --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.488 0.243 264.376);
-  --sidebar-primary-foreground: oklch(0.985 0 0);
-  --sidebar-accent: oklch(0.274 0.006 286.033);
-  --sidebar-accent-foreground: oklch(0.985 0 0);
-  --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.552 0.016 285.938);
+  @theme {
+    /* === DARK MODE TOKENS === */
+    /* Deep, rich, premium - NOT washed out */
+
+    /* Backgrounds - Rich deep tones */
+    --background: 240 12% 6%;
+    --foreground: 40 10% 90%;
+
+    /* Surfaces - Subtle layering */
+    --surface-elevated: 240 10% 9%;
+    --surface-subtle: 240 10% 8%;
+    --surface-muted: 240 8% 12%;
+
+    /* Card surfaces */
+    --card: 240 10% 8%;
+    --card-foreground: 40 10% 90%;
+
+    /* Popover */
+    --popover: 240 10% 9%;
+    --popover-foreground: 40 10% 90%;
+
+    /* Primary - Soft cream */
+    --primary: 40 10% 90%;
+    --primary-foreground: 240 12% 6%;
+
+    /* Secondary */
+    --secondary: 240 8% 14%;
+    --secondary-foreground: 40 8% 85%;
+
+    /* Muted tones */
+    --muted: 240 8% 14%;
+    --muted-foreground: 240 5% 50%;
+
+    /* Accent - Muted teal */
+    --accent: 168 30% 50%;
+    --accent-foreground: 240 12% 6%;
+
+    /* Destructive */
+    --destructive: 0 50% 45%;
+    --destructive-foreground: 0 0% 100%;
+
+    /* Borders and inputs */
+    --border: 240 8% 16%;
+    --input: 240 8% 16%;
+    --ring: 168 30% 50%;
+
+    /* Text hierarchy */
+    --text-primary: 40 10% 90%;
+    --text-secondary: 240 5% 58%;
+    --text-tertiary: 240 4% 42%;
+
+    /* Accent variants */
+    --accent-muted: 168 20% 12%;
+    --accent-strong: 168 35% 55%;
+
+    /* Status colors */
+    --success: 158 35% 50%;
+    --success-muted: 158 20% 12%;
+
+    /* Sidebar */
+    --sidebar-background: 240 10% 7%;
+    --sidebar-foreground: 40 10% 90%;
+    --sidebar-primary: 168 30% 50%;
+    --sidebar-primary-foreground: 240 12% 6%;
+    --sidebar-accent: 240 8% 12%;
+    --sidebar-accent-foreground: 40 8% 85%;
+    --sidebar-border: 240 8% 14%;
+    --sidebar-ring: 168 30% 50%;
+
+    /* Liquid glass effect */
+    --glass-bg: 240 12% 8% / 0.75;
+    --glass-border: 240 8% 25% / 0.5;
+    --glass-shadow: 240 20% 4% / 0.4;
+  }
 }
 
-@layer base {
-  * {
-    @apply border-border outline-ring/50;
+/* --------------------------------------------------
+   Base Styles
+-------------------------------------------------- */
+
+* {
+  border-color: hsl(var(--border));
+}
+
+body {
+  margin: 0;
+  background-color: hsl(var(--background));
+  color: hsl(var(--foreground));
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --------------------------------------------------
+   Animations (Converted from Lovable)
+-------------------------------------------------- */
+
+@keyframes accordion-down {
+  from {
+    height: 0;
   }
-  body {
-    @apply bg-background text-foreground;
+  to {
+    height: var(--radix-accordion-content-height);
+  }
+}
+
+@keyframes accordion-up {
+  from {
+    height: var(--radix-accordion-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* --------------------------------------------------
+   Animation Utilities
+-------------------------------------------------- */
+
+.animate-accordion-down {
+  animation: accordion-down 0.2s ease-out;
+}
+
+.animate-accordion-up {
+  animation: accordion-up 0.2s ease-out;
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+.animate-spotlight {
+  animation: spotlight 2s ease 0.75s forwards;
+}
+
+@keyframes spotlight {
+  0% {
+    opacity: 0;
+    transform: translate(-72%, -62%) scale(0.5);
+  }
+  100% {
+    opacity: 1;
+    transform: translate(-50%, -40%) scale(1);
   }
 }
