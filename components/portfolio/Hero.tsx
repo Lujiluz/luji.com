@@ -14,10 +14,10 @@ export const Hero = () => {
       <div className="section-container relative z-10">
         <div className="max-w-3xl">
           <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="mb-6">
-            <Badge variant="secondary" className="bg-accent/10 text-[hsl(var(--accent))] hover:bg-accent/20 border-accent/20">
+            <Badge variant="secondary" className="bg-accent/10 text-[hsl(var(--accent))] hover:bg-[hsl(var(--accent))]/20 border-[hsl(var(--accent))]/20">
               <span className="relative flex h-2 w-2 mr-2">
-                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-accent opacity-75"></span>
-                <span className="relative inline-flex rounded-full h-2 w-2 bg-accent"></span>
+                <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[hsl(var(--accent))] opacity-75"></span>
+                <span className="relative inline-flex rounded-full h-2 w-2 bg-[hsl(var(--accent))]"></span>
               </span>
               Available for projects
             </Badge>
@@ -45,12 +45,6 @@ export const Hero = () => {
             </Button>
           </motion.div>
         </div>
-
-        <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ duration: 0.8, delay: 0.8 }} className="absolute bottom-32 left-1/2 -translate-x-1/2 hidden md:block">
-          <motion.div animate={{ y: [0, 8, 0] }} transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }} className="text-muted-foreground">
-            <ArrowDown className="w-5 h-5" />
-          </motion.div>
-        </motion.div>
       </div>
     </section>
   );
