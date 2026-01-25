@@ -1,24 +1,57 @@
 "use client";
 
 import Lenis from "lenis";
-import * as React from "react";
+import { useEffect } from "react";
 
 export default function LenisProvider() {
-  React.useEffect(() => {
-    const lenis = new Lenis();
+  useEffect(() => {
+    const isTouch = typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0);
 
-    lenis.on("scroll", (e: any) => {
-      console.log(e);
+    const lenis = new Lenis({
+      // 🎯 Scroll feel
+      duration: isTouch ? 0.9 : 1.25,
+      easing: (t) => 1 - Math.pow(1 - t, 4),
+
+      // 🖥️ Desktop smooth
+      smoothWheel: true,
+
+      // 🎚️ Sensitivity
+      wheelMultiplier: 1,
+      touchMultiplier: 1.1,
     });
 
     function raf(time: number) {
       lenis.raf(time);
       requestAnimationFrame(raf);
     }
-
     requestAnimationFrame(raf);
 
+    // 🔗 Anchor handling
+    const onClick = (e: MouseEvent) => {
+      const target = e.target as HTMLElement;
+      const anchor = target.closest("a[href^='#']") as HTMLAnchorElement | null;
+      if (!anchor) return;
+
+      const hash = anchor.getAttribute("href");
+      if (!hash || hash === "#") return;
+
+      const el = document.querySelector(hash) as HTMLElement | null;
+      if (!el) return;
+
+      e.preventDefault();
+
+      lenis.scrollTo(el, {
+        // Floating dock ada di BAWAH
+        offset: isTouch ? 80 : 96,
+        duration: isTouch ? 1 : 1.35,
+        easing: (t) => 1 - Math.pow(1 - t, 4),
+      });
+    };
+
+    document.addEventListener("click", onClick);
+
     return () => {
+      document.removeEventListener("click", onClick);
       lenis.destroy();
     };
   }, []);

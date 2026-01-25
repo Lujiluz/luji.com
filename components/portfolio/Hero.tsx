@@ -7,6 +7,7 @@ import { Badge } from "../ui/badge";
 import { ArrowDown } from "lucide-react";
 import { Button } from "../ui/button";
 import { MotionWrapper } from "../ui/motion-wrapper";
+import StaggeredButton from "../ui/staggered-button";
 
 export const Hero = () => {
   return (
@@ -35,12 +36,10 @@ export const Hero = () => {
           </MotionWrapper>
 
           <MotionWrapper initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.6 }} className="flex items-center gap-4">
-            <Button asChild variant='default' size="lg" className="rounded-xl">
-              <a href="#projects" className="gap-2">
-                View my work
-                <ArrowDown className="w-4 h-4" />
-              </a>
-            </Button>
+            <StaggeredButton asChild size="lg" text="View my work" direction="up" rightIcon={<ArrowDown className="w-4 h-4" />}>
+              <a href="#projects" />
+            </StaggeredButton>
+
             <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
               <a href="#contact">Let's talk →</a>
             </Button>

@@ -11,7 +11,7 @@ const Header = () => {
     {
       title: "Home",
       icon: <IconHome className="h-full w-full text-foreground/80" />,
-      href: "#",
+      href: "/",
     },
     {
       title: "Work",

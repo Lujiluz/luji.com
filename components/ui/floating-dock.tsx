@@ -1,7 +1,6 @@
 import { cn } from "@/lib/utils";
 import { IconLayoutNavbarCollapse } from "@tabler/icons-react";
 import { AnimatePresence, MotionValue, motion, useMotionValue, useSpring, useTransform } from "motion/react";
-import Link from "next/link";
 
 import { useRef, useState } from "react";
 
@@ -38,9 +37,9 @@ const FloatingDockMobile = ({ items, className }: { items: { title: string; icon
                 }}
                 transition={{ delay: (items.length - 1 - idx) * 0.05 }}
               >
-                <Link href={item.href} key={item.title} className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 dark:bg-neutral-900" scroll={false}>
+                <a href={item.href} key={item.title} className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 dark:bg-neutral-900">
                   <div className="h-4 w-4">{item.icon}</div>
-                </Link>
+                </a>
               </motion.div>
             ))}
           </motion.div>
@@ -104,7 +103,7 @@ function IconContainer({ mouseX, title, icon, href }: { mouseX: MotionValue; tit
   const [hovered, setHovered] = useState(false);
 
   return (
-    <Link href={href}>
+    <a href={href}>
       <motion.div
         ref={ref}
         style={{ width, height }}
@@ -128,6 +127,6 @@ function IconContainer({ mouseX, title, icon, href }: { mouseX: MotionValue; tit
           {icon}
         </motion.div>
       </motion.div>
-    </Link>
+    </a>
   );
 }
