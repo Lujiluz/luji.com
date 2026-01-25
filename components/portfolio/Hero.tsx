@@ -4,16 +4,17 @@ import { Spotlight } from "../ui/spotlight";
 import { motion } from "framer-motion";
 import { TextGenerateEffect } from "../ui/text-generate-effect";
 import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
 import { ArrowDown } from "lucide-react";
+import { Button } from "../ui/button";
+import { MotionWrapper } from "../ui/motion-wrapper";
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center pb-24 overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center pb-24 overflow-hidden" id="/">
       <Spotlight className="-top-40 left-0 md:-top-20 md:left-60" fill="hsl(var(--accent))" />
       <div className="section-container relative z-10">
         <div className="max-w-3xl">
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="mb-6">
+          <MotionWrapper initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="mb-6">
             <Badge variant="secondary" className="bg-accent/10 text-[hsl(var(--accent))] hover:bg-[hsl(var(--accent))]/20 border-[hsl(var(--accent))]/20">
               <span className="relative flex h-2 w-2 mr-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[hsl(var(--accent))] opacity-75"></span>
@@ -21,20 +22,20 @@ export const Hero = () => {
               </span>
               Available for projects
             </Badge>
-          </motion.div>
+          </MotionWrapper>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="mb-6">
+          <MotionWrapper initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="mb-6">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-semibold leading-tight tracking-tight text-foreground">
               <TextGenerateEffect words="Full-Stack Developer building reliable, scalable systems" />
             </h1>
-          </motion.div>
+          </MotionWrapper>
 
-          <motion.p initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }} className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 leading-relaxed">
+          <MotionWrapper initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.5 }} className="text-lg md:text-xl text-muted-foreground max-w-2xl mb-8 leading-relaxed">
             I design and build web applications with focus on performance, maintainability, and user experience. From database architecture to pixel-perfect interfaces.
-          </motion.p>
+          </MotionWrapper>
 
-          <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.6 }} className="flex items-center gap-4">
-            <Button asChild size="lg" className="rounded-xl">
+          <MotionWrapper initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.6 }} className="flex items-center gap-4">
+            <Button asChild variant='default' size="lg" className="rounded-xl">
               <a href="#projects" className="gap-2">
                 View my work
                 <ArrowDown className="w-4 h-4" />
@@ -43,7 +44,7 @@ export const Hero = () => {
             <Button variant="ghost" asChild className="text-muted-foreground hover:text-foreground">
               <a href="#contact">Let's talk →</a>
             </Button>
-          </motion.div>
+          </MotionWrapper>
         </div>
       </div>
     </section>

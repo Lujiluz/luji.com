@@ -1,6 +1,7 @@
 import { cn } from "@/lib/utils";
 import { IconLayoutNavbarCollapse } from "@tabler/icons-react";
 import { AnimatePresence, MotionValue, motion, useMotionValue, useSpring, useTransform } from "motion/react";
+import Link from "next/link";
 
 import { useRef, useState } from "react";
 
@@ -37,9 +38,9 @@ const FloatingDockMobile = ({ items, className }: { items: { title: string; icon
                 }}
                 transition={{ delay: (items.length - 1 - idx) * 0.05 }}
               >
-                <a href={item.href} key={item.title} className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 dark:bg-neutral-900">
+                <Link href={item.href} key={item.title} className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-50 dark:bg-neutral-900" scroll={false}>
                   <div className="h-4 w-4">{item.icon}</div>
-                </a>
+                </Link>
               </motion.div>
             ))}
           </motion.div>
@@ -55,7 +56,7 @@ const FloatingDockMobile = ({ items, className }: { items: { title: string; icon
 const FloatingDockDesktop = ({ items, className }: { items: { title: string; icon: React.ReactNode; href: string }[]; className?: string }) => {
   let mouseX = useMotionValue(Infinity);
   return (
-    <motion.div onMouseMove={(e) => mouseX.set(e.pageX)} onMouseLeave={() => mouseX.set(Infinity)} className={cn("mx-auto hidden h-16 items-end gap-4 rounded-2xl bg-gray-50 px-4 pb-3 md:flex bg-primary", className)}>
+    <motion.div onMouseMove={(e) => mouseX.set(e.pageX)} onMouseLeave={() => mouseX.set(Infinity)} className={cn("mx-auto hidden h-16 items-end gap-4 rounded-2xl bg-gray-50 px-4 pb-3 md:flex bg-secondary", className)}>
       {items.map((item) => (
         <IconContainer mouseX={mouseX} key={item.title} {...item} />
       ))}
@@ -103,13 +104,13 @@ function IconContainer({ mouseX, title, icon, href }: { mouseX: MotionValue; tit
   const [hovered, setHovered] = useState(false);
 
   return (
-    <a href={href}>
+    <Link href={href}>
       <motion.div
         ref={ref}
         style={{ width, height }}
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
-        className="relative flex aspect-square items-center justify-center rounded-full border border-[hsl(var(--accent))] bg-[hsl(var(--background))] hover:bg-accent hover:text-accent-foreground"
+        className="relative flex aspect-square items-center justify-center rounded-full border border-accent bg-surface-subtle hover:bg-accent hover:text-accent-foreground"
       >
         <AnimatePresence>
           {hovered && (
@@ -127,6 +128,6 @@ function IconContainer({ mouseX, title, icon, href }: { mouseX: MotionValue; tit
           {icon}
         </motion.div>
       </motion.div>
-    </a>
+    </Link>
   );
 }

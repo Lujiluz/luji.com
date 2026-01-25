@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import "./globals.css";
 import { fontDisplay, fontMono, fontSans } from "./fonts";
 import { ThemeProvider } from "./providers/theme-provider";
+import LenisProvider from "./providers/lenis-provider";
 
 export const metadata: Metadata = {
   title: "Create Next App",
@@ -14,8 +15,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
       <body className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable} antialiased`}>
+        <LenisProvider />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>

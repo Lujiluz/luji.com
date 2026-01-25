@@ -1,5 +1,6 @@
 import Header from "@/components/portfolio/Header";
 import { Hero } from "@/components/portfolio/Hero";
+import Projects from "@/components/portfolio/Projects";
 import { Button } from "@/components/ui/button";
 import Image from "next/image";
 
@@ -9,6 +10,7 @@ export default function Home() {
       <Header />
       <main>
         <Hero />
+        <Projects />
       </main>
     </div>
   );
