@@ -1,5 +1,6 @@
 import Contact from "@/components/portfolio/Contact";
 import Experience from "@/components/portfolio/Experience";
+import Footer from "@/components/portfolio/Footer";
 import Header from "@/components/portfolio/Header";
 import { Hero } from "@/components/portfolio/Hero";
 import Projects from "@/components/portfolio/Projects";
@@ -20,6 +21,7 @@ export default function Home() {
         <Writing />
         <Contact />
       </main>
+      <Footer />
     </div>
   );
 }
