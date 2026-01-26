@@ -1,18 +1,13 @@
 "use client";
 
-import { motion, MotionProps } from "framer-motion";
-import { ReactNode } from "react";
+import { motion } from "framer-motion";
+import { forwardRef, ComponentPropsWithoutRef } from "react";
 import { cn } from "@/lib/utils";
 
-interface MotionWrapperProps extends MotionProps {
-  children: ReactNode;
-  className?: string;
-}
+type MotionDivProps = ComponentPropsWithoutRef<typeof motion.div>;
 
-export function MotionWrapper({ children, className, ...motionProps }: MotionWrapperProps) {
-  return (
-    <motion.div className={cn(className)} {...motionProps}>
-      {children}
-    </motion.div>
-  );
-}
+export const MotionWrapper = forwardRef<HTMLDivElement, MotionDivProps>(({ className, ...props }, ref) => {
+  return <motion.div ref={ref} className={cn(className)} {...props} />;
+});
+
+MotionWrapper.displayName = "MotionWrapper";
