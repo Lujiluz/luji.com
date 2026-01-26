@@ -1,23 +1,83 @@
 "use client";
 
 import * as React from "react";
-import { HTMLMotionProps, motion } from "framer-motion";
+import { HTMLMotionProps, motion, useMotionValue, useSpring, useMotionTemplate } from "framer-motion";
 import { cn } from "@/lib/utils";
 import { MotionWrapper } from "./motion-wrapper";
 
+/* ---------------------------------- */
+/* Card                               */
+/* ---------------------------------- */
+
 const Card = React.forwardRef<HTMLDivElement, HTMLMotionProps<"div">>(({ className, children, ...props }, ref) => {
-  const [pos, setPos] = React.useState({ x: 0, y: 0 });
-  const [opacity, setOpacity] = React.useState(0);
+  const cardRef = React.useRef<HTMLDivElement>(null);
+  const opacity = useMotionValue(0);
+
+  const smoothOpacity = useSpring(opacity, {
+    stiffness: 120,
+    damping: 22,
+  });
+
+  // handle mouse enter
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+
+    const rect = cardRef.current.getBoundingClientRect();
+    mouseX.set(e.clientX - rect.left);
+    mouseY.set(e.clientY - rect.top);
+
+    opacity.set(0.45);
+  };
+
+  // handle mouse leave
+  const handleMouseLeave = () => {
+    opacity.set(0);
+  };
+
+  // Raw cursor position
+  const mouseX = useMotionValue(0);
+  const mouseY = useMotionValue(0);
+
+  // Buttery smooth spring
+  const smoothX = useSpring(mouseX, {
+    stiffness: 160,
+    damping: 30,
+    mass: 0.5,
+  });
+
+  const smoothY = useSpring(mouseY, {
+    stiffness: 160,
+    damping: 30,
+    mass: 0.5,
+  });
+
+  // Dynamic gradient (correct way)
+  const spotlight = useMotionTemplate`
+    radial-gradient(
+      520px circle at ${smoothX}px ${smoothY}px,
+      hsl(var(--accent) / 0.5),
+      transparent 42%
+    )
+  `;
+
+  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!cardRef.current) return;
+
+    const rect = cardRef.current.getBoundingClientRect();
+    mouseX.set(e.clientX - rect.left);
+    mouseY.set(e.clientY - rect.top);
+  };
 
   return (
     <MotionWrapper
-      ref={ref}
-      onMouseMove={(e: any) => {
-        const rect = (e.currentTarget as HTMLDivElement).getBoundingClientRect();
-        setPos({ x: e.clientX - rect.left, y: e.clientY - rect.top });
+      ref={(node) => {
+        cardRef.current = node;
+        if (typeof ref === "function") ref(node);
+        else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
       }}
-      onMouseEnter={() => setOpacity(0.45)}
-      onMouseLeave={() => setOpacity(0)}
+      onMouseMove={handleMouseMove}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
       whileHover={{ y: -3, scale: 1.01 }}
       transition={{
         type: "spring",
@@ -27,27 +87,26 @@ const Card = React.forwardRef<HTMLDivElement, HTMLMotionProps<"div">>(({ classNa
       }}
       className={cn(
         `
-          relative overflow-hidden rounded-xl
-          border border-border
-          bg-card text-card-foreground
-          shadow-sm
-          `,
+        relative overflow-hidden rounded-xl
+        border border-border
+        bg-card text-card-foreground
+        shadow-sm
+        `,
         className,
       )}
       {...props}
     >
-      <div
-        className="pointer-events-none absolute inset-0 transition-opacity duration-300"
+      {/* Spotlight layer */}
+      <motion.div
+        className="pointer-events-none absolute inset-0"
         style={{
-          opacity,
-          background: `radial-gradient(
-              520px circle at ${pos.x}px ${pos.y}px,
-              hsl(var(--accent) / 0.35),
-              transparent 42%
-            )`,
+          opacity: smoothOpacity,
+          background: spotlight,
         }}
+        transition={{ opacity: { duration: 0.25, ease: "easeOut" } }}
       />
 
+      {/* Top sheen */}
       <div
         className="pointer-events-none absolute inset-0"
         style={{
@@ -59,9 +118,12 @@ const Card = React.forwardRef<HTMLDivElement, HTMLMotionProps<"div">>(({ classNa
     </MotionWrapper>
   );
 });
-Card.displayName = "Card";
 
 Card.displayName = "Card";
+
+/* ---------------------------------- */
+/* Subcomponents                      */
+/* ---------------------------------- */
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => <div ref={ref} className={cn("flex flex-col gap-1.5 p-6", className)} {...props} />);
 CardHeader.displayName = "CardHeader";
