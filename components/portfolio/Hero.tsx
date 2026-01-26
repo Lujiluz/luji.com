@@ -16,7 +16,7 @@ export const Hero = () => {
       <div className="section-container relative z-10">
         <div className="max-w-3xl">
           <MotionWrapper initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="mb-6">
-            <Badge variant="secondary" className="bg-accent/10 text-[hsl(var(--accent))] hover:bg-[hsl(var(--accent))]/20 border-[hsl(var(--accent))]/20">
+            <Badge variant="secondary" className="text-[hsl(var(--accent))] bg-[hsl(var(--accent))]/20 border-[hsl(var(--accent))]/20">
               <span className="relative flex h-2 w-2 mr-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[hsl(var(--accent))] opacity-75"></span>
                 <span className="relative inline-flex rounded-full h-2 w-2 bg-[hsl(var(--accent))]"></span>

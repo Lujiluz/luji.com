@@ -44,13 +44,7 @@ export function ThemeToggle() {
   };
 
   return (
-    <Button
-      variant="outline"
-      size="icon"
-      onClick={() => toggleTheme(!isDark)}
-      className="relative cursor-pointer aspect-square items-center justify-center rounded-full bg-[var(--glass-bg)] border border-[var(--glass-border)] backdrop-blur-md shadow-sm"
-      ref={ref}
-    >
+    <Button variant="default" size="icon" onClick={() => toggleTheme(!isDark)} className="text-primary relative cursor-pointer aspect-square items-center justify-center rounded-full bg-[var(--glass-bg)] backdrop-blur-md shadow-sm" ref={ref}>
       {!mounted ? <Moon className="h-4 w-4" /> : isDark ? <Moon className="h-4 w-4" /> : <Sun className="h-4 w-4" />}
     </Button>
   );

@@ -47,7 +47,7 @@ const levelVariants: Record<string, "default" | "secondary" | "glass" | "outline
 
 export default function Skills() {
   return (
-    <section id="skills" className="section-spacing bg-muted/30">
+    <section id="skills" className="section-spacing bg-[hsl(var(--muted)/0.3)]">
       <div className="section-container">
         <MotionWrapper initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="mb-12">
           <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">Technical Skills</span>

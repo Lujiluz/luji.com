@@ -257,7 +257,6 @@ function IconContainer({ mouseX, title, icon, href }: { mouseX: MotionValue; tit
         className="
           relative flex aspect-square items-center justify-center rounded-full
           bg-[var(--glass-bg)]
-          border border-[var(--glass-border)]
           backdrop-blur-md
           shadow-sm
           transition-colors

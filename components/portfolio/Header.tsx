@@ -42,7 +42,7 @@ const Header = () => {
 
   return (
     <div className="fixed bottom-6 left-1/2 z-50 -translate-x-1/2">
-      <div className={cn("relative flex items-center gap-2 rounded-2xl px-2", "bg-[var(--glass-bg)] border border-[var(--glass-border) backdrop-blur-md shadow-sm")}>
+      <div className={cn("relative flex items-center gap-2 rounded-2xl px-2", "bg-[var(--glass-bg)] backdrop-blur-md shadow-sm")}>
         <FloatingDock items={links} desktopClassName="" />
 
         <div className="h-10 w-px bg-black/50 dark:bg-white/50 mx-1" />
