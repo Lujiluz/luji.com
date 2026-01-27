@@ -14,7 +14,7 @@ const Footer = () => {
           </motion.p>
 
           <motion.p whileHover={{ opacity: 0.85 }} transition={{ duration: 0.2 }}>
-            Designed & developed by me
+            Designed & developed by Luji
           </motion.p>
         </div>
       </motion.div>
