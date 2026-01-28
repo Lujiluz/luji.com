@@ -18,7 +18,21 @@ export type DockItem = {
 /*                                  UTILITIES                                 */
 /* -------------------------------------------------------------------------- */
 
-const canHover = typeof window !== "undefined" && window.matchMedia("(hover: hover)").matches;
+function useCanHover() {
+  const [canHover, setCanHover] = useState(false);
+
+  useEffect(() => {
+    const mq = window.matchMedia("(hover: hover)");
+    setCanHover(mq.matches);
+
+    const handler = (e: MediaQueryListEvent) => setCanHover(e.matches);
+    mq.addEventListener("change", handler);
+
+    return () => mq.removeEventListener("change", handler);
+  }, []);
+
+  return canHover;
+}
 
 /* -------------------------------------------------------------------------- */
 /*                               FLOATING DOCK                                */
@@ -106,7 +120,9 @@ export function FloatingDock({ items, className, children }: { items: DockItem[]
 /* -------------------------------------------------------------------------- */
 
 function DockIcon({ mouseX, title, icon, href }: { mouseX: MotionValue<number>; title: string; icon: React.ReactNode; href: string }) {
+  const canHover = useCanHover();
   const ref = useRef<HTMLDivElement>(null);
+  const isMounted = useRef(false);
   const [hovered, setHovered] = useState(false);
 
   /* ----------------------------- DISTANCE LOGIC ---------------------------- */
@@ -125,14 +141,19 @@ function DockIcon({ mouseX, title, icon, href }: { mouseX: MotionValue<number>; 
   /* -------------------------- SNAP TO CENTER (X) ---------------------------- */
   const snapX = useSpring(useTransform(distance, [-200, 0, 200], [14, 0, -14]), { stiffness: 300, damping: 22 });
 
+  /* -------------------------- HYDRATION MISMATCH GUARD ---------------------------- */
+  useEffect(() => {
+    isMounted.current = true;
+  }, []);
+
   return (
     <a href={href}>
       <motion.div
         ref={ref}
         style={{
-          width: canHover ? size : 40,
-          height: canHover ? size : 40,
-          x: canHover ? snapX : 0,
+          width: isMounted.current && canHover ? size : 40,
+          height: isMounted.current && canHover ? size : 40,
+          x: isMounted.current && canHover ? snapX : 0,
         }}
         onMouseEnter={() => canHover && setHovered(true)}
         onMouseLeave={() => canHover && setHovered(false)}
