@@ -3,6 +3,7 @@
 import { useEffect, useRef, useState } from "react";
 import { AnimatePresence, MotionValue, motion, useMotionValue, useScroll, useSpring, useTransform } from "motion/react";
 import { cn } from "@/lib/utils";
+import { ChevronLeft, ChevronRight } from "lucide-react";
 
 /* -------------------------------------------------------------------------- */
 /*                                    TYPES                                   */
@@ -190,12 +191,72 @@ export function FloatingDock({ items, className, children }: { items: DockItem[]
                   backdrop-blur-md shadow-xl
                 "
               >
-                <button onClick={() => setMobileExpanded(true)} className="relative w-10 h-10 flex items-center justify-center">
-                  <AnimatePresence mode="popLayout">
-                    <motion.div key={activeIndex} initial={{ y: scrollDir === "down" ? 16 : -16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: scrollDir === "down" ? -16 : 16, opacity: 0 }} transition={{ duration: 0.18 }}>
-                      {items[activeIndex]?.icon}
-                    </motion.div>
-                  </AnimatePresence>
+                <button
+                  onClick={() => setMobileExpanded(true)}
+                  className="
+                    relative w-12 h-10
+                    flex items-center justify-center
+                  "
+                >
+                  {/* CENTER ICON */}
+                  <div className="relative w-9 h-9 overflow-hidden">
+                    <AnimatePresence mode="wait">
+                      <motion.div
+                        key={activeIndex}
+                        initial={{
+                          y: scrollDir === "down" ? 16 : -16,
+                          opacity: 0,
+                        }}
+                        animate={{ y: 0, opacity: 1 }}
+                        exit={{
+                          y: scrollDir === "down" ? -16 : 16,
+                          opacity: 0,
+                        }}
+                        transition={{ duration: 0.22, ease: "easeOut" }}
+                        className="absolute inset-0 flex items-center justify-center"
+                      >
+                        {items[activeIndex]?.icon}
+                      </motion.div>
+                    </AnimatePresence>
+                  </div>
+
+                  {/* LEFT ARROW */}
+                  <motion.div
+                    aria-hidden
+                    animate={{ x: [0, -4, 0] }}
+                    transition={{
+                      duration: 1.2,
+                      repeat: Infinity,
+                      repeatDelay: 2.5,
+                      ease: "easeInOut",
+                    }}
+                    className="
+                      pointer-events-none
+                      absolute left-[-5px]
+                      opacity-60
+                    "
+                  >
+                    <ChevronLeft size={14} strokeWidth={1} />
+                  </motion.div>
+
+                  {/* RIGHT ARROW */}
+                  <motion.div
+                    aria-hidden
+                    animate={{ x: [0, 4, 0] }}
+                    transition={{
+                      duration: 1.2,
+                      repeat: Infinity,
+                      repeatDelay: 2.5,
+                      ease: "easeInOut",
+                    }}
+                    className="
+                      pointer-events-none
+                      absolute right-[-5px]
+                      opacity-60
+                    "
+                  >
+                    <ChevronRight size={14} strokeWidth={1} />
+                  </motion.div>
                 </button>
 
                 <div className="h-8 w-px bg-black/20 dark:bg-white/20" />
