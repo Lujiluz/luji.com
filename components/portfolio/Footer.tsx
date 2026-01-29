@@ -1,6 +1,6 @@
 "use client"
 import { motion } from "framer-motion";
-import { Separator } from "@/components/ui/separator";
+import { Separator } from "../ui/separator";
 
 const Footer = () => {
   return (

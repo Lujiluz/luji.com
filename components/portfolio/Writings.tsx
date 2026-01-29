@@ -48,7 +48,7 @@ const itemVariants = {
 
 export default function Writing() {
   return (
-    <section id="writing" className="relative py-24 bg-[hsl(var(--muted)/0.3)]">
+    <section id="writing" className="relative py-24 bg-[hsl(var(--muted)/0.3)]" data-dock>
       <div className="mx-auto max-w-6xl px-4">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease: "easeOut" }} className="mb-16">

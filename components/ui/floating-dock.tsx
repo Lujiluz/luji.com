@@ -1,9 +1,8 @@
 "use client";
 
-import useMounted from "@/app/hooks/useMounted";
-import { cn } from "@/lib/utils";
-import { AnimatePresence, MotionValue, motion, useMotionValue, useSpring, useTransform, useScroll } from "motion/react";
 import { useEffect, useRef, useState } from "react";
+import { AnimatePresence, MotionValue, motion, useMotionValue, useScroll, useSpring, useTransform } from "motion/react";
+import { cn } from "@/lib/utils";
 
 /* -------------------------------------------------------------------------- */
 /*                                    TYPES                                   */
@@ -19,6 +18,12 @@ export type DockItem = {
 /*                                  UTILITIES                                 */
 /* -------------------------------------------------------------------------- */
 
+function useMounted() {
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  return mounted;
+}
+
 function useCanHover() {
   const [canHover, setCanHover] = useState(false);
 
@@ -28,7 +33,6 @@ function useCanHover() {
 
     const handler = (e: MediaQueryListEvent) => setCanHover(e.matches);
     mq.addEventListener("change", handler);
-
     return () => mq.removeEventListener("change", handler);
   }, []);
 
@@ -44,127 +48,200 @@ export function FloatingDock({ items, className, children }: { items: DockItem[]
   const canHover = useCanHover();
   const mouseX = useMotionValue(Infinity);
 
-  /* -------------------------- SCROLL VISIBILITY --------------------------- */
+  /* ----------------------------- VISIBILITY ----------------------------- */
   const { scrollY } = useScroll();
   const lastY = useRef(0);
 
   const [visible, setVisible] = useState(true);
-  const [locked, setLocked] = useState(false);
-  const [hoveringDock, setHoveringDock] = useState(false);
+  const [hoverLock, setHoverLock] = useState(false);
 
+  /* ------------------------------ MOBILE ------------------------------ */
+  const [mobileExpanded, setMobileExpanded] = useState(false);
+  const [activeIndex, setActiveIndex] = useState(0);
+  const [scrollDir, setScrollDir] = useState<"up" | "down">("down");
+
+  /* ---------------------- DESKTOP HIDE ON SCROLL ----------------------- */
   useEffect(() => {
     return scrollY.on("change", (y) => {
-      if (locked || hoveringDock) return;
-
       const delta = y - lastY.current;
-
-      if (y < 80) {
-        setVisible(true);
-      } else if (delta > 8) {
-        setVisible(false);
-      }
-
       lastY.current = y;
+
+      if (!canHover) return;
+      if (hoverLock) return;
+
+      if (y < 80) setVisible(true);
+      else if (delta > 8) setVisible(false);
+
+      setScrollDir(delta > 0 ? "down" : "up");
     });
-  }, [scrollY, locked, hoveringDock]);
+  }, [scrollY, canHover, hoverLock]);
 
+  /* --------------------- MOBILE ACTIVE SECTION --------------------- */
   useEffect(() => {
-    if (!locked && !hoveringDock && scrollY.get() > 80) {
-      setVisible(false);
-    }
-  }, [locked, hoveringDock]);
+    if (canHover) return;
 
-  /* ------------------------- APPLE-LIKE ANIMATION -------------------------- */
-  const dockVariants = {
-    hidden: {
-      opacity: 0,
-      scaleX: 0.25,
-      scaleY: 0.4,
-      y: 32,
-      borderRadius: "999px",
-    },
-    visible: {
-      opacity: 1,
-      scaleX: 1,
-      scaleY: 1,
-      y: 0,
-      borderRadius: "16px",
-      transition: {
-        type: "spring" as const,
-        stiffness: 260,
-        damping: 26,
-        mass: 0.6,
+    const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-dock]"));
+    if (!sections.length) return;
+
+    const visibility = new Map<string, number>();
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          visibility.set(entry.target.id, entry.intersectionRatio);
+        });
+
+        let bestId: string | null = null;
+        let bestRatio = 0;
+
+        visibility.forEach((ratio, id) => {
+          if (ratio > bestRatio) {
+            bestRatio = ratio;
+            bestId = id;
+          }
+        });
+
+        if (!bestId) return;
+
+        const index = items.findIndex((i) => i.href === `#${bestId}`);
+        if (index !== -1) {
+          setActiveIndex(index);
+        }
       },
-    },
-  };
+      {
+        threshold: 0.01,
+        rootMargin: "-40% 0px -40% 0px",
+      },
+    );
+
+    sections.forEach((s) => observer.observe(s));
+    return () => observer.disconnect();
+  }, [items, canHover]);
 
   if (!mounted) return null;
 
   return (
     <>
-      {/* ---------------- BOTTOM HOVER REVEAL ZONE ---------------- */}
+      {/* ================= DESKTOP HOVER REVEAL ZONE ================= */}
       {canHover && (
         <div
           className="fixed bottom-0 left-1/2 z-40 h-28 w-[320px] -translate-x-1/2"
           onPointerEnter={() => {
-            setLocked(true);
+            setHoverLock(true);
             setVisible(true);
           }}
-          onPointerLeave={() => {
-            setLocked(false);
-          }}
+          onPointerLeave={() => setHoverLock(false)}
         />
       )}
 
-      {/* --------------------------- DOCK --------------------------- */}
+      {/* ================= DOCK ROOT ================= */}
       <AnimatePresence>
         {visible && (
           <motion.div
-            variants={dockVariants}
-            initial="hidden"
-            animate="visible"
-            exit="hidden"
-            onPointerEnter={() => {
-              setHoveringDock(true);
-              setLocked(true);
-            }}
-            onPointerLeave={() => {
-              setHoveringDock(false);
-              setLocked(false);
-            }}
-            className={cn("fixed bottom-4 left-1/2 z-50 -translate-x-1/2 origin-bottom", className)}
+            initial={{ opacity: 0, scale: 0.4, y: 32 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.4, y: 32 }}
+            transition={{ type: "spring", stiffness: 260, damping: 26, mass: 0.6 }}
+            onPointerEnter={() => setHoverLock(true)}
+            onPointerLeave={() => setHoverLock(false)}
+            className={cn("fixed bottom-4 left-1/2 z-50 -translate-x-1/2", className)}
           >
-            <motion.div
-              onMouseMove={(e) => mouseX.set(e.pageX)}
-              onMouseLeave={() => mouseX.set(Infinity)}
-              className="
-                flex items-end
-                rounded-2xl
-                bg-[var(--glass-bg)]
-                border border-[var(--glass-border)]
-                backdrop-blur-md
-                shadow-xl
+            {/* ================= DESKTOP DOCK ================= */}
+            {canHover && (
+              <motion.div
+                onMouseMove={(e) => mouseX.set(e.pageX)}
+                onMouseLeave={() => mouseX.set(Infinity)}
+                className="
+                  flex items-end
+                  rounded-2xl
+                  bg-[var(--glass-bg)]
+                  border border-[var(--glass-border)]
+                  backdrop-blur-md
+                  shadow-xl
 
-                h-14 md:h-16
-                px-6 md:px-5
-                pb-2 md:pb-3
-                space-x-2 md:space-x-4
+                  h-14 md:h-16
+                  px-6 md:px-5
+                  pb-2 md:pb-3
+                  space-x-2 md:space-x-4
+                  [contain:layout_style]
+                "
+              >
+                {items.map((item) => (
+                  <DockIcon key={item.title} mouseX={mouseX} {...item} />
+                ))}
 
-                overflow-visible
-                [contain:layout_style]
-              "
-            >
-              {items.map((item) => (
-                <DockIcon key={item.title} mouseX={mouseX} {...item} />
-              ))}
+                {children && (
+                  <div onMouseEnter={() => mouseX.set(Infinity)} onMouseMove={() => mouseX.set(Infinity)} className="flex items-center gap-4">
+                    <div className="h-8 w-px bg-black/20 dark:bg-white/20 md:h-10" />
+                    {children}
+                  </div>
+                )}
+              </motion.div>
+            )}
 
-              {children && (
-                <div onMouseEnter={() => mouseX.set(Infinity)} onMouseMove={() => mouseX.set(Infinity)} className="flex items-center gap-4">
-                  <div className="h-8 w-px bg-black/20 dark:bg-white/20 md:h-10" />
-                  <div className="flex items-center justify-center">{children}</div>
-                </div>
-              )}
-            </motion.div>
+            {/* ================= MOBILE COLLAPSED ================= */}
+            {!canHover && !mobileExpanded && (
+              <motion.div
+                className="
+                  flex items-center gap-4 px-4 h-14
+                  rounded-full
+                  bg-[var(--glass-bg)]
+                  border border-[var(--glass-border)]
+                  backdrop-blur-md shadow-xl
+                "
+              >
+                <button onClick={() => setMobileExpanded(true)} className="relative w-10 h-10 flex items-center justify-center">
+                  <AnimatePresence mode="popLayout">
+                    <motion.div key={activeIndex} initial={{ y: scrollDir === "down" ? 16 : -16, opacity: 0 }} animate={{ y: 0, opacity: 1 }} exit={{ y: scrollDir === "down" ? -16 : 16, opacity: 0 }} transition={{ duration: 0.18 }}>
+                      {items[activeIndex]?.icon}
+                    </motion.div>
+                  </AnimatePresence>
+                </button>
+
+                <div className="h-8 w-px bg-black/20 dark:bg-white/20" />
+                {children}
+              </motion.div>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* ================= MOBILE EXPANDED (DESKTOP STYLE) ================= */}
+      <AnimatePresence>
+        {!canHover && mobileExpanded && (
+          <motion.div
+            initial={{ opacity: 0, scale: 0.92, y: 16 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            exit={{ opacity: 0, scale: 0.92, y: 16 }}
+            transition={{ duration: 0.25, ease: "easeOut" }}
+            className="
+              fixed bottom-4 left-1/2 z-50 -translate-x-1/2
+              flex items-end
+              rounded-2xl
+              bg-[var(--glass-bg)]
+              border border-[var(--glass-border)]
+              backdrop-blur-md
+              shadow-xl
+
+              h-14
+              px-4
+              pb-2
+              space-x-2
+            "
+          >
+            {items.map((item) => (
+              <a key={item.title} href={item.href}>
+                <div className="w-9 h-9 flex items-center justify-center rounded-full bg-white/40 dark:bg-white/10">{item.icon}</div>
+              </a>
+            ))}
+
+            <div className="h-8 w-px bg-black/20 dark:bg-white/20" />
+
+            {children}
+
+            <button onClick={() => setMobileExpanded(false)} className="ml-2 text-xs opacity-60">
+              ✕
+            </button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -181,7 +258,6 @@ function DockIcon({ mouseX, title, icon, href }: { mouseX: MotionValue<number>; 
   const ref = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
 
-  /* -------------------------- DISTANCE CALC -------------------------- */
   const distance = useTransform(mouseX, (x) => {
     if (!canHover) return Infinity;
     const rect = ref.current?.getBoundingClientRect();
@@ -189,12 +265,22 @@ function DockIcon({ mouseX, title, icon, href }: { mouseX: MotionValue<number>; 
     return x - rect.left - rect.width / 2;
   });
 
-  /* -------------------------- MAGNIFY -------------------------- */
-  const size = useSpring(useTransform(distance, [-160, 0, 160], [40, 76, 40]), { stiffness: 300, damping: 24, mass: 0.5 });
+  const size = useSpring(useTransform(distance, [-160, 0, 160], [40, 76, 40]), {
+    stiffness: 300,
+    damping: 24,
+    mass: 0.5,
+  });
 
-  const iconSize = useSpring(useTransform(distance, [-160, 0, 160], [18, 38, 18]), { stiffness: 300, damping: 24, mass: 0.5 });
+  const iconSize = useSpring(useTransform(distance, [-160, 0, 160], [18, 38, 18]), {
+    stiffness: 300,
+    damping: 24,
+    mass: 0.5,
+  });
 
-  const snapX = useSpring(useTransform(distance, [-200, 0, 200], [14, 0, -14]), { stiffness: 280, damping: 22 });
+  const snapX = useSpring(useTransform(distance, [-200, 0, 200], [14, 0, -14]), {
+    stiffness: 280,
+    damping: 22,
+  });
 
   return (
     <a href={href}>
@@ -205,35 +291,29 @@ function DockIcon({ mouseX, title, icon, href }: { mouseX: MotionValue<number>; 
           height: canHover ? size : 40,
           x: canHover ? snapX : 0,
         }}
-        onMouseEnter={() => canHover && setHovered(true)}
-        onMouseLeave={() => canHover && setHovered(false)}
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
         className="
-          relative flex aspect-square items-center justify-center
+          relative flex items-center justify-center
           rounded-full
           bg-white/40 dark:bg-white/10
           backdrop-blur-md
           shadow-sm
           will-change-transform
-          active:scale-95
         "
       >
-        {/* Tooltip */}
         <AnimatePresence>
           {hovered && canHover && (
             <motion.div
               initial={{ opacity: 0, y: 6, x: "-50%" }}
               animate={{ opacity: 1, y: 0, x: "-50%" }}
               exit={{ opacity: 0, y: 4, x: "-50%" }}
-              transition={{ duration: 0.15 }}
               className="
                 absolute -top-9 left-1/2
-                rounded-md
-                px-2 py-0.5 text-xs
+                rounded-md px-2 py-0.5 text-xs
                 bg-[var(--glass-bg)]
                 border border-[var(--glass-border)]
-                backdrop-blur-md
-                shadow-md
-                whitespace-nowrap
+                backdrop-blur-md shadow-md
               "
             >
               {title}

@@ -10,40 +10,40 @@ const Header = () => {
   const links = [
     {
       title: "Home",
-      icon: <IconHome className="h-full w-full text-foreground/80" />,
-      href: "/",
+      icon: <IconHome className="size-5 text-foreground/80" />,
+      href: "#home",
     },
     {
       title: "Work",
-      icon: <Briefcase className="h-full w-full text-foreground/80" />,
+      icon: <Briefcase className="size-5 text-foreground/80" />,
       href: "#projects",
     },
     {
       title: "Skills",
-      icon: <Code2 className="h-full w-full text-foreground/80" />,
+      icon: <Code2 className="size-5 text-foreground/80" />,
       href: "#skills",
     },
     {
       title: "Experience",
-      icon: <Sparkles className="h-full w-full text-foreground/80" />,
+      icon: <Sparkles className="size-5 text-foreground/80" />,
       href: "#experience",
     },
     {
       title: "Writing",
-      icon: <FileTextIcon className="h-full w-full text-foreground/80" />,
+      icon: <FileTextIcon className="size-5 text-foreground/80" />,
       href: "#writing",
     },
     {
       title: "Contact",
-      icon: <MailIcon className="h-full w-full text-foreground/80" />,
+      icon: <MailIcon className="size-5 text-foreground/80" />,
       href: "#contact",
     },
   ];
 
   return (
-      <FloatingDock items={links}>
-        <ThemeToggle />
-        </FloatingDock>
+    <FloatingDock items={links}>
+      <ThemeToggle />
+    </FloatingDock>
   );
 };
 

@@ -15,7 +15,7 @@ const socialLinks = [
 
 export default function Contact() {
   return (
-    <section id="contact" className="relative py-24">
+    <section id="contact" className="relative py-24" data-dock>
       <WavyBackground speed="slow" containerClassName="bg-background">
         <div className="mx-auto max-w-6xl px-4">
           <motion.div initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease: "easeOut" }} className="mx-auto max-w-2xl text-center">

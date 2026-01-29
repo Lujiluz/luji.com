@@ -39,9 +39,9 @@ const projects = [
   },
 ];
 
-const Projects = () => {
+export default function Projects() {
   return (
-    <section id="projects" className="section-spacing">
+    <section id="projects" className="section-spacing" data-dock>
       <div className="section-container">
         <MotionWrapper initial={{ opacity: 0, y: 20 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5 }} className="mb-12">
           <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">Selected Work</span>
@@ -102,6 +102,4 @@ const Projects = () => {
       </div>
     </section>
   );
-};
-
-export default Projects;
+}
