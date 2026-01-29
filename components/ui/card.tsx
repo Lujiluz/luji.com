@@ -114,7 +114,7 @@ const Card = React.forwardRef<HTMLDivElement, HTMLMotionProps<"div">>(({ classNa
         }}
       />
 
-      {children}
+      {React.isValidElement(children) ? children : null}
     </MotionWrapper>
   );
 });
