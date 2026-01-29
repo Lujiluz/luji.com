@@ -9,7 +9,8 @@ export default function LenisProvider() {
 
     const lenis = new Lenis({
       // 🎯 Scroll feel
-      duration: isTouch ? 0.9 : 1.25,
+      lerp: isTouch ? 0.1 : 0.075,
+      duration: isTouch ? 0.9 : 1.5,
       easing: (t) => 1 - Math.pow(1 - t, 4),
 
       // 🖥️ Desktop smooth
@@ -18,13 +19,19 @@ export default function LenisProvider() {
       // 🎚️ Sensitivity
       wheelMultiplier: 1,
       touchMultiplier: 1.1,
+
+      // Mobile
+      syncTouch: false,
+      syncTouchLerp: 0.075,
+
+      autoRaf: true
     });
 
-    function raf(time: number) {
-      lenis.raf(time);
-      requestAnimationFrame(raf);
-    }
-    requestAnimationFrame(raf);
+    // function raf(time: number) {
+    //   lenis.raf(time);
+    //   requestAnimationFrame(raf);
+    // }
+    // requestAnimationFrame(raf);
 
     // 🔗 Anchor handling
     const onClick = (e: MouseEvent) => {
