@@ -5,33 +5,25 @@ import { useEffect } from "react";
 
 export default function LenisProvider() {
   useEffect(() => {
-    const isTouch = typeof window !== "undefined" && ("ontouchstart" in window || navigator.maxTouchPoints > 0);
-
     const lenis = new Lenis({
-      // 🎯 Scroll feel
-      lerp: isTouch ? 0.1 : 0.075,
-      duration: isTouch ? 0.9 : 1.5,
-      easing: (t) => 1 - Math.pow(1 - t, 4),
-
-      // 🖥️ Desktop smooth
+      // 🎯 Scroll feel (Desktop)
+      // Higher lerp = snappier/tighter control. Lower = floaty/heavy.
+      // 0.12 is a sweet spot for "premium" but responsive feel.
+      lerp: 0.12,
+      
+      // ⚙️ Configuration
+      duration: 1.2, // Slightly shorter duration for snappier feel
       smoothWheel: true,
-
-      // 🎚️ Sensitivity
-      wheelMultiplier: 1,
-      touchMultiplier: 1.1,
-
-      // Mobile
-      syncTouch: false,
-      syncTouchLerp: 0.075,
-
-      autoRaf: true
+      
+      // 📱 Mobile Optimization
+      // syncTouch: false is correct! It lets mobile use NATIVE scroll (60fps).
+      // We don't want Lenis to calculate scroll physics on touch fingers.
+      syncTouch: false, 
+      touchMultiplier: 2, // Makes touch scrolling feel more 1:1 if syncTouch were on
+      
+      // 🚀 Performance
+      autoRaf: true, // Let Lenis handle its own animation frame optimization
     });
-
-    // function raf(time: number) {
-    //   lenis.raf(time);
-    //   requestAnimationFrame(raf);
-    // }
-    // requestAnimationFrame(raf);
 
     // 🔗 Anchor handling
     const onClick = (e: MouseEvent) => {
@@ -48,10 +40,11 @@ export default function LenisProvider() {
       e.preventDefault();
 
       lenis.scrollTo(el, {
-        // Floating dock ada di BAWAH
-        offset: isTouch ? 80 : 96,
-        duration: isTouch ? 1 : 1.35,
-        easing: (t) => 1 - Math.pow(1 - t, 4),
+        offset: -80, // Negative value for top offset (header height)
+        duration: 1.2,
+        // Exponential easing feels much snappier than Quartic
+        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
+        immediate: false,
       });
     };
 

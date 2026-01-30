@@ -1,123 +1,122 @@
 "use client";
 
 import * as React from "react";
-import { HTMLMotionProps, motion, useMotionValue, useSpring, useMotionTemplate } from "framer-motion";
+import { 
+  HTMLMotionProps, 
+  motion, 
+  useMotionValue, 
+  useSpring, 
+  useMotionTemplate 
+} from "framer-motion"; // Use "motion/react" if on v12
 import { cn } from "@/lib/utils";
-import { MotionWrapper } from "./motion-wrapper";
 
 /* ---------------------------------- */
 /* Card                               */
 /* ---------------------------------- */
 
-const Card = React.forwardRef<HTMLDivElement, HTMLMotionProps<"div">>(({ className, children, ...props }, ref) => {
-  const cardRef = React.useRef<HTMLDivElement>(null);
-  const opacity = useMotionValue(0);
+// FIX: Create an interface to strictly define children as ReactNode
+interface CardProps extends HTMLMotionProps<"div"> {
+  children?: React.ReactNode;
+}
 
-  const smoothOpacity = useSpring(opacity, {
-    stiffness: 120,
-    damping: 22,
-  });
+const Card = React.forwardRef<HTMLDivElement, CardProps>(
+  ({ className, children, ...props }, ref) => {
+    const cardRef = React.useRef<HTMLDivElement>(null);
+    const opacity = useMotionValue(0);
 
-  // handle mouse enter
-  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
+    const smoothOpacity = useSpring(opacity, {
+      stiffness: 120,
+      damping: 22,
+    });
 
-    const rect = cardRef.current.getBoundingClientRect();
-    mouseX.set(e.clientX - rect.left);
-    mouseY.set(e.clientY - rect.top);
+    const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (!cardRef.current) return;
+      const rect = cardRef.current.getBoundingClientRect();
+      mouseX.set(e.clientX - rect.left);
+      mouseY.set(e.clientY - rect.top);
+      opacity.set(0.45);
+    };
 
-    opacity.set(0.45);
-  };
+    const handleMouseLeave = () => {
+      opacity.set(0);
+    };
 
-  // handle mouse leave
-  const handleMouseLeave = () => {
-    opacity.set(0);
-  };
+    const mouseX = useMotionValue(0);
+    const mouseY = useMotionValue(0);
 
-  // Raw cursor position
-  const mouseX = useMotionValue(0);
-  const mouseY = useMotionValue(0);
+    const smoothX = useSpring(mouseX, {
+      stiffness: 160,
+      damping: 30,
+      mass: 0.5,
+    });
 
-  // Buttery smooth spring
-  const smoothX = useSpring(mouseX, {
-    stiffness: 160,
-    damping: 30,
-    mass: 0.5,
-  });
+    const smoothY = useSpring(mouseY, {
+      stiffness: 160,
+      damping: 30,
+      mass: 0.5,
+    });
 
-  const smoothY = useSpring(mouseY, {
-    stiffness: 160,
-    damping: 30,
-    mass: 0.5,
-  });
+    const spotlight = useMotionTemplate`
+      radial-gradient(
+        520px circle at ${smoothX}px ${smoothY}px,
+        hsl(var(--accent) / 0.5),
+        transparent 42%
+      )
+    `;
 
-  // Dynamic gradient (correct way)
-  const spotlight = useMotionTemplate`
-    radial-gradient(
-      520px circle at ${smoothX}px ${smoothY}px,
-      hsl(var(--accent) / 0.5),
-      transparent 42%
-    )
-  `;
+    const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+      if (!cardRef.current) return;
+      const rect = cardRef.current.getBoundingClientRect();
+      mouseX.set(e.clientX - rect.left);
+      mouseY.set(e.clientY - rect.top);
+    };
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!cardRef.current) return;
-
-    const rect = cardRef.current.getBoundingClientRect();
-    mouseX.set(e.clientX - rect.left);
-    mouseY.set(e.clientY - rect.top);
-  };
-
-  return (
-    <MotionWrapper
-      ref={(node) => {
-        cardRef.current = node;
-        if (typeof ref === "function") ref(node);
-        else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
-      }}
-      onMouseMove={handleMouseMove}
-      onMouseEnter={handleMouseEnter}
-      onMouseLeave={handleMouseLeave}
-      whileHover={{ y: -3, scale: 1.01 }}
-      transition={{
-        type: "spring",
-        stiffness: 220,
-        damping: 28,
-        mass: 0.9,
-      }}
-      className={cn(
-        `
-        relative overflow-hidden rounded-xl
-        border border-border
-        bg-card text-card-foreground
-        shadow-sm
-        `,
-        className,
-      )}
-      {...props}
-    >
-      {/* Spotlight layer */}
+    return (
       <motion.div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          opacity: smoothOpacity,
-          background: spotlight,
+        ref={(node) => {
+          cardRef.current = node;
+          if (typeof ref === "function") ref(node);
+          else if (ref) (ref as React.MutableRefObject<HTMLDivElement | null>).current = node;
         }}
-        transition={{ opacity: { duration: 0.25, ease: "easeOut" } }}
-      />
-
-      {/* Top sheen */}
-      <div
-        className="pointer-events-none absolute inset-0"
-        style={{
-          background: "linear-gradient(180deg, rgba(255,255,255,0.06), transparent 60%)",
+        onMouseMove={handleMouseMove}
+        onMouseEnter={handleMouseEnter}
+        onMouseLeave={handleMouseLeave}
+        whileHover={{ y: -3, scale: 1.01 }}
+        transition={{
+          type: "spring",
+          stiffness: 220,
+          damping: 28,
+          mass: 0.9,
         }}
-      />
+        className={cn(
+          "relative overflow-hidden rounded-xl border border-border bg-card text-card-foreground shadow-sm",
+          className
+        )}
+        {...props}
+      >
+        {/* Spotlight layer */}
+        <motion.div
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            opacity: smoothOpacity,
+            background: spotlight,
+          }}
+          transition={{ opacity: { duration: 0.25, ease: "easeOut" } }}
+        />
 
-      {React.isValidElement(children) ? children : null}
-    </MotionWrapper>
-  );
-});
+        {/* Top sheen */}
+        <div
+          className="pointer-events-none absolute inset-0 -z-10"
+          style={{
+            background: "linear-gradient(180deg, rgba(255,255,255,0.06), transparent 60%)",
+          }}
+        />
+
+        {children}
+      </motion.div>
+    );
+  }
+);
 
 Card.displayName = "Card";
 

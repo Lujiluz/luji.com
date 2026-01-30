@@ -1,12 +1,20 @@
 "use client";
 
 import { useEffect, useRef, useState } from "react";
-import { AnimatePresence, MotionValue, motion, useMotionValue, useScroll, useSpring, useTransform } from "motion/react";
+import {
+  AnimatePresence,
+  MotionValue,
+  motion,
+  useMotionValue,
+  useScroll,
+  useSpring,
+  useTransform,
+} from "motion/react";
 import { cn } from "@/lib/utils";
-import { ChevronLeft, ChevronRight } from "lucide-react";
+import { ChevronLeft, ChevronRight, X } from "lucide-react";
 
 /* -------------------------------------------------------------------------- */
-/*                                    TYPES                                   */
+/* TYPES                                   */
 /* -------------------------------------------------------------------------- */
 
 export type DockItem = {
@@ -16,7 +24,7 @@ export type DockItem = {
 };
 
 /* -------------------------------------------------------------------------- */
-/*                                  UTILITIES                                 */
+/* UTILITIES                                 */
 /* -------------------------------------------------------------------------- */
 
 function useMounted() {
@@ -41,10 +49,18 @@ function useCanHover() {
 }
 
 /* -------------------------------------------------------------------------- */
-/*                               FLOATING DOCK                                */
+/* FLOATING DOCK                               */
 /* -------------------------------------------------------------------------- */
 
-export function FloatingDock({ items, className, children }: { items: DockItem[]; className?: string; children?: React.ReactNode }) {
+export function FloatingDock({
+  items,
+  className,
+  children,
+}: {
+  items: DockItem[];
+  className?: string;
+  children?: React.ReactNode;
+}) {
   const mounted = useMounted();
   const canHover = useCanHover();
   const mouseX = useMotionValue(Infinity);
@@ -60,6 +76,7 @@ export function FloatingDock({ items, className, children }: { items: DockItem[]
   const [mobileExpanded, setMobileExpanded] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
   const [scrollDir, setScrollDir] = useState<"up" | "down">("down");
+  const dockRef = useRef<HTMLDivElement>(null);
 
   /* ---------------------- DESKTOP HIDE ON SCROLL ----------------------- */
   useEffect(() => {
@@ -112,12 +129,31 @@ export function FloatingDock({ items, className, children }: { items: DockItem[]
       {
         threshold: 0.01,
         rootMargin: "-40% 0px -40% 0px",
-      },
+      }
     );
 
     sections.forEach((s) => observer.observe(s));
     return () => observer.disconnect();
   }, [items, canHover]);
+
+  /* --------------------- CLICK OUTSIDE HANDLER --------------------- */
+  useEffect(() => {
+    const handleClickOutside = (event: MouseEvent | TouchEvent) => {
+      if (dockRef.current && !dockRef.current.contains(event.target as Node)) {
+        setMobileExpanded(false);
+      }
+    };
+
+    if (mobileExpanded) {
+      document.addEventListener("mousedown", handleClickOutside);
+      document.addEventListener("touchstart", handleClickOutside);
+    }
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+      document.removeEventListener("touchstart", handleClickOutside);
+    };
+  }, [mobileExpanded]);
 
   if (!mounted) return null;
 
@@ -139,13 +175,17 @@ export function FloatingDock({ items, className, children }: { items: DockItem[]
       <AnimatePresence>
         {visible && (
           <motion.div
+            ref={dockRef}
             initial={{ opacity: 0, scale: 0.4, y: 32 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.4, y: 32 }}
             transition={{ type: "spring", stiffness: 260, damping: 26, mass: 0.6 }}
             onPointerEnter={() => setHoverLock(true)}
             onPointerLeave={() => setHoverLock(false)}
-            className={cn("fixed bottom-4 left-1/2 z-50 -translate-x-1/2", className)}
+            className={cn(
+              "fixed bottom-4 left-1/2 z-50 -translate-x-1/2 max-w-[calc(100vw-32px)]",
+              className
+            )}
           >
             {/* ================= DESKTOP DOCK ================= */}
             {canHover && (
@@ -159,12 +199,10 @@ export function FloatingDock({ items, className, children }: { items: DockItem[]
                   border border-[var(--glass-border)]
                   backdrop-blur-md
                   shadow-xl
-
                   h-14 md:h-16
                   px-6 md:px-5
                   pb-2 md:pb-3
                   space-x-2 md:space-x-4
-                  [contain:layout_style]
                 "
               >
                 {items.map((item) => (
@@ -172,7 +210,11 @@ export function FloatingDock({ items, className, children }: { items: DockItem[]
                 ))}
 
                 {children && (
-                  <div onMouseEnter={() => mouseX.set(Infinity)} onMouseMove={() => mouseX.set(Infinity)} className="flex items-center gap-4">
+                  <div
+                    onMouseEnter={() => mouseX.set(Infinity)}
+                    onMouseMove={() => mouseX.set(Infinity)}
+                    className="flex items-center gap-4"
+                  >
                     <div className="h-8 w-px bg-black/20 dark:bg-white/20 md:h-10" />
                     {children}
                   </div>
@@ -180,129 +222,126 @@ export function FloatingDock({ items, className, children }: { items: DockItem[]
               </motion.div>
             )}
 
-            {/* ================= MOBILE COLLAPSED ================= */}
-            {!canHover && !mobileExpanded && (
+            {/* ================= MOBILE DYNAMIC ISLAND ================= */}
+            {!canHover && (
               <motion.div
-                className="
-                  flex items-center gap-4 px-4 h-14
-                  rounded-full
-                  bg-[var(--glass-bg)]
-                  border border-[var(--glass-border)]
-                  backdrop-blur-md shadow-xl
-                "
+                layout
+                style={{ borderRadius: 24 }}
+                transition={{
+                  type: "spring",
+                  stiffness: 320,
+                  damping: 30,
+                  mass: 0.8,
+                }}
+                className={cn(
+                  "relative flex items-center overflow-hidden",
+                  "bg-[var(--glass-bg)] border border-[var(--glass-border)] backdrop-blur-md shadow-xl",
+                  "transform-gpu will-change-[width,height]",
+                  mobileExpanded
+                    ? "h-16 w-full max-w-[400px]"
+                    : "h-14 w-auto px-3" // FIX: Changed to w-auto and added padding so children fit
+                )}
               >
-                <button
-                  onClick={() => setMobileExpanded(true)}
-                  className="
-                    relative w-12 h-10
-                    flex items-center justify-center
-                  "
-                >
-                  {/* CENTER ICON */}
-                  <div className="relative w-9 h-9 overflow-hidden">
-                    <AnimatePresence mode="wait">
-                      <motion.div
-                        key={activeIndex}
-                        initial={{
-                          y: scrollDir === "down" ? 16 : -16,
-                          opacity: 0,
-                        }}
-                        animate={{ y: 0, opacity: 1 }}
-                        exit={{
-                          y: scrollDir === "down" ? -16 : 16,
-                          opacity: 0,
-                        }}
-                        transition={{ duration: 0.22, ease: "easeOut" }}
-                        className="absolute inset-0 flex items-center justify-center"
+                <AnimatePresence mode="popLayout">
+                  {!mobileExpanded ? (
+                    /* --- COLLAPSED STATE --- */
+                    <motion.div
+                      key="collapsed"
+                      initial={{ opacity: 0, scale: 0.8, filter: "blur(8px)" }}
+                      animate={{ opacity: 1, scale: 1, filter: "blur(0px)" }}
+                      exit={{ opacity: 0, scale: 0.8, filter: "blur(8px)" }}
+                      transition={{ duration: 0.25, ease: "easeOut" }}
+                      className="flex h-full items-center gap-2" // Added gap for spacing between button and children
+                    >
+                      <button
+                        onClick={() => setMobileExpanded(true)}
+                        className="relative h-10 w-10 shrink-0 flex items-center justify-center"
                       >
-                        {items[activeIndex]?.icon}
-                      </motion.div>
-                    </AnimatePresence>
-                  </div>
+                        {/* Center Icon */}
+                        <div className="relative w-8 h-8 overflow-hidden">
+                          <AnimatePresence mode="wait">
+                            <motion.div
+                              key={activeIndex}
+                              initial={{ y: scrollDir === "down" ? 12 : -12, opacity: 0 }}
+                              animate={{ y: 0, opacity: 1 }}
+                              exit={{ y: scrollDir === "down" ? -12 : 12, opacity: 0 }}
+                              transition={{ duration: 0.2, ease: "easeOut" }}
+                              className="absolute inset-0 flex items-center justify-center"
+                            >
+                              {items[activeIndex]?.icon}
+                            </motion.div>
+                          </AnimatePresence>
+                        </div>
 
-                  {/* LEFT ARROW */}
-                  <motion.div
-                    aria-hidden
-                    animate={{ x: [0, -4, 0] }}
-                    transition={{
-                      duration: 1.2,
-                      repeat: Infinity,
-                      repeatDelay: 2.5,
-                      ease: "easeInOut",
-                    }}
-                    className="
-                      pointer-events-none
-                      absolute left-[-5px]
-                      opacity-60
-                    "
-                  >
-                    <ChevronLeft size={14} strokeWidth={1} />
-                  </motion.div>
+                        {/* Arrows */}
+                        <motion.div
+                          animate={{ x: [0, -3, 0] }}
+                          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                          className="pointer-events-none absolute left-0.5 opacity-50"
+                        >
+                          <ChevronLeft size={12} />
+                        </motion.div>
+                        <motion.div
+                          animate={{ x: [0, 3, 0] }}
+                          transition={{ duration: 1.5, repeat: Infinity, ease: "easeInOut" }}
+                          className="pointer-events-none absolute right-0.5 opacity-50"
+                        >
+                          <ChevronRight size={12} />
+                        </motion.div>
+                      </button>
 
-                  {/* RIGHT ARROW */}
-                  <motion.div
-                    aria-hidden
-                    animate={{ x: [0, 4, 0] }}
-                    transition={{
-                      duration: 1.2,
-                      repeat: Infinity,
-                      repeatDelay: 2.5,
-                      ease: "easeInOut",
-                    }}
-                    className="
-                      pointer-events-none
-                      absolute right-[-5px]
-                      opacity-60
-                    "
-                  >
-                    <ChevronRight size={14} strokeWidth={1} />
-                  </motion.div>
-                </button>
+                      {/* FIX: Render children here (e.g. Theme Toggle) */}
+                      {children && (
+                        <div className="flex items-center gap-3 border-l border-white/10 pl-3">
+                          {children}
+                        </div>
+                      )}
+                    </motion.div>
+                  ) : (
+                    /* --- EXPANDED STATE --- */
+                    <motion.div
+                      key="expanded"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0, transition: { duration: 0.1 } }}
+                      transition={{ duration: 0.2 }}
+                      className="flex w-full items-center justify-between pr-4 pl-1"
+                    >
+                      {/* Nav Items Container */}
+                      <div className="
+                        flex items-center gap-3 overflow-x-auto px-3 py-2 no-scrollbar
+                        mask-image-linear-to-r from-transparent via-black to-transparent
+                      ">
+                        {items.map((item) => (
+                          <a
+                            key={item.title}
+                            href={item.href}
+                            onClick={() => setMobileExpanded(false)}
+                            className="shrink-0"
+                          >
+                            <div className="w-10 h-10 flex items-center justify-center rounded-full bg-white/40 dark:bg-white/10 active:scale-95 transition-transform">
+                              {item.icon}
+                            </div>
+                          </a>
+                        ))}
+                      </div>
 
-                <div className="h-8 w-px bg-black/20 dark:bg-white/20" />
-                {children}
+                      {/* Divider & Actions */}
+                      <div className="flex shrink-0 items-center gap-3 pl-3 border-l border-white/10 dark:border-white/10">
+                        {children}
+
+                        <button
+                          onClick={() => setMobileExpanded(false)}
+                          className="flex h-8 w-8 items-center justify-center rounded-full bg-black/5 dark:bg-white/5 active:scale-90 transition-transform"
+                        >
+                          <X size={14} className="opacity-60" />
+                        </button>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </motion.div>
             )}
-          </motion.div>
-        )}
-      </AnimatePresence>
-
-      {/* ================= MOBILE EXPANDED (DESKTOP STYLE) ================= */}
-      <AnimatePresence>
-        {!canHover && mobileExpanded && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92, y: 16 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.92, y: 16 }}
-            transition={{ duration: 0.25, ease: "easeOut" }}
-            className="
-              fixed bottom-4 left-1/2 z-50 -translate-x-1/2
-              flex items-end
-              rounded-2xl
-              bg-[var(--glass-bg)]
-              border border-[var(--glass-border)]
-              backdrop-blur-md
-              shadow-xl
-
-              h-14
-              px-4
-              pb-2
-              space-x-2
-            "
-          >
-            {items.map((item) => (
-              <a key={item.title} href={item.href}>
-                <div className="w-9 h-9 flex items-center justify-center rounded-full bg-white/40 dark:bg-white/10">{item.icon}</div>
-              </a>
-            ))}
-
-            <div className="h-8 w-px bg-black/20 dark:bg-white/20" />
-
-            {children}
-
-            <button onClick={() => setMobileExpanded(false)} className="ml-2 text-xs opacity-60">
-              ✕
-            </button>
           </motion.div>
         )}
       </AnimatePresence>
@@ -311,10 +350,20 @@ export function FloatingDock({ items, className, children }: { items: DockItem[]
 }
 
 /* -------------------------------------------------------------------------- */
-/*                                 DOCK ICON                                  */
+/* DOCK ICON                                 */
 /* -------------------------------------------------------------------------- */
 
-function DockIcon({ mouseX, title, icon, href }: { mouseX: MotionValue<number>; title: string; icon: React.ReactNode; href: string }) {
+function DockIcon({
+  mouseX,
+  title,
+  icon,
+  href,
+}: {
+  mouseX: MotionValue<number>;
+  title: string;
+  icon: React.ReactNode;
+  href: string;
+}) {
   const canHover = useCanHover();
   const ref = useRef<HTMLDivElement>(null);
   const [hovered, setHovered] = useState(false);
