@@ -11,7 +11,7 @@ import StaggeredButton from "../ui/staggered-button";
 
 export const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center pb-24 overflow-hidden" id="home" data-dock>
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden" id="home" data-dock>
       <Spotlight className="-top-40 left-0 md:-top-20 md:left-60" fill="hsl(var(--accent))" />
       <div className="section-container relative z-10">
         <div className="max-w-3xl">
