@@ -5,27 +5,22 @@ import { useEffect } from "react";
 
 export default function LenisProvider() {
   useEffect(() => {
+    const isMobile = window.matchMedia("(pointer: coarse)").matches;
+
     const lenis = new Lenis({
-      // 🎯 Scroll feel (Desktop)
-      // Higher lerp = snappier/tighter control. Lower = floaty/heavy.
-      // 0.12 is a sweet spot for "premium" but responsive feel.
-      lerp: 0.12,
-      
-      // ⚙️ Configuration
-      duration: 1.2, // Slightly shorter duration for snappier feel
-      smoothWheel: true,
-      
-      // 📱 Mobile Optimization
-      // syncTouch: false is correct! It lets mobile use NATIVE scroll (60fps).
-      // We don't want Lenis to calculate scroll physics on touch fingers.
-      syncTouch: false, 
-      touchMultiplier: 2, // Makes touch scrolling feel more 1:1 if syncTouch were on
-      
-      // 🚀 Performance
-      autoRaf: true, // Let Lenis handle its own animation frame optimization
+      // 🖥 Desktop smooth
+      lerp: isMobile ? 1 : 0.1,
+      duration: isMobile ? 0 : 1.2,
+      smoothWheel: !isMobile,
+
+      // 📱 Mobile = native scroll
+      syncTouch: false,
+      touchMultiplier: 1,
+
+      autoRaf: true,
     });
 
-    // 🔗 Anchor handling
+    // 🔗 Anchor smooth scroll (desktop & mobile)
     const onClick = (e: MouseEvent) => {
       const target = e.target as HTMLElement;
       const anchor = target.closest("a[href^='#']") as HTMLAnchorElement | null;
@@ -40,11 +35,9 @@ export default function LenisProvider() {
       e.preventDefault();
 
       lenis.scrollTo(el, {
-        offset: -80, // Negative value for top offset (header height)
-        duration: 1.2,
-        // Exponential easing feels much snappier than Quartic
-        easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)), 
-        immediate: false,
+        offset: -80,
+        duration: isMobile ? 0.4 : 1.2,
+        easing: (t) => 1 - Math.pow(1 - t, 3),
       });
     };
 
