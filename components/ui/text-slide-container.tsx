@@ -3,7 +3,8 @@
 import { useRef } from "react";
 import { useScroll } from "framer-motion";
 import Slide from "./text-slide";
-import Picture from "@/public/images/image-3.png";
+import Picture1 from "@/public/images/image-1-generated.png";
+import Picture2 from "@/public/images/image-2-generated.png";
 
 export default function TextSlideContainer() {
   const containerRef = useRef<HTMLDivElement | null>(null);
@@ -18,11 +19,11 @@ export default function TextSlideContainer() {
       <div className="md:h-[10vh]" />
 
       <div ref={containerRef}>
-        <Slide src={Picture} left={"-40%"} direction="left" progress={scrollYProgress} />
+        <Slide src={Picture1} left={"-40%"} direction="left" progress={scrollYProgress} />
 
-        <Slide src={Picture} left={"-25%"} direction="right" progress={scrollYProgress} />
+        <Slide src={Picture2} left={"-25%"} direction="right" progress={scrollYProgress} />
 
-        <Slide src={Picture} left={"-75%"} direction="left" progress={scrollYProgress} />
+        <Slide src={Picture1} left={"-75%"} direction="left" progress={scrollYProgress} />
       </div>
 
       <div className="md:h-[15vh]" />
