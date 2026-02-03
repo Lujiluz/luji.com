@@ -4,32 +4,42 @@ import { motion } from "motion/react";
 import { ArrowUpRight } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { WorkingInProgress } from "../ui/wip-badge";
 
-const articles = [
-  {
-    title: "Designing for Scale: Lessons from Migrating to Microservices",
-    excerpt: "A practical guide on when microservices make sense, common pitfalls to avoid, and patterns that actually work in production.",
-    category: "Architecture",
-    readTime: "8 min",
-    date: "2024",
-    link: "#",
-  },
-  {
-    title: "Performance Optimization: Beyond the Basics",
-    excerpt: "Exploring advanced techniques for identifying and fixing performance bottlenecks—from database query analysis to frontend bundle optimization.",
-    category: "Performance",
-    readTime: "12 min",
-    date: "2024",
-    link: "#",
-  },
-  {
-    title: "Building Reliable Systems with Graceful Degradation",
-    excerpt: "How to design applications that fail gracefully, maintain core functionality during outages, and recover automatically.",
-    category: "Reliability",
-    readTime: "6 min",
-    date: "2023",
-    link: "#",
-  },
+interface Article {
+  title: string;
+  excerpt: string;
+  category: string;
+  readTime: string;
+  date: string;
+  link: string;
+}
+
+const articles: Article[] = [
+  // {
+  //   title: "Designing for Scale: Lessons from Migrating to Microservices",
+  //   excerpt: "A practical guide on when microservices make sense, common pitfalls to avoid, and patterns that actually work in production.",
+  //   category: "Architecture",
+  //   readTime: "8 min",
+  //   date: "2024",
+  //   link: "#",
+  // },
+  // {
+  //   title: "Performance Optimization: Beyond the Basics",
+  //   excerpt: "Exploring advanced techniques for identifying and fixing performance bottlenecks—from database query analysis to frontend bundle optimization.",
+  //   category: "Performance",
+  //   readTime: "12 min",
+  //   date: "2024",
+  //   link: "#",
+  // },
+  // {
+  //   title: "Building Reliable Systems with Graceful Degradation",
+  //   excerpt: "How to design applications that fail gracefully, maintain core functionality during outages, and recover automatically.",
+  //   category: "Reliability",
+  //   readTime: "6 min",
+  //   date: "2023",
+  //   link: "#",
+  // },
 ];
 
 const containerVariants = {
@@ -58,10 +68,11 @@ export default function Writing() {
 
         {/* Articles */}
         <motion.div variants={containerVariants} initial="hidden" whileInView="show" viewport={{ once: true }} className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {articles.map((article) => (
-            <motion.a key={article.title} href={article.link} variants={itemVariants} className="group block h-full">
-              <Card
-                className="
+          {articles.length > 0 ? (
+            articles.map((article) => (
+              <motion.a key={article.title} href={article.link} variants={itemVariants} className="group block h-full">
+                <Card
+                  className="
                   relative h-full
                   bg-background/70 backdrop-blur-md
                   border-border/60
@@ -69,15 +80,15 @@ export default function Writing() {
                   hover:-translate-y-1
                   hover:shadow-lg
                 "
-              >
-                <CardHeader className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Badge variant="secondary" className="font-mono text-xs">
-                      {article.category}
-                    </Badge>
+                >
+                  <CardHeader className="space-y-3">
+                    <div className="flex items-center justify-between">
+                      <Badge variant="secondary" className="font-mono text-xs">
+                        {article.category}
+                      </Badge>
 
-                    <ArrowUpRight
-                      className="
+                      <ArrowUpRight
+                        className="
                         h-4 w-4
                         text-muted-foreground
                         transition-all duration-300
@@ -85,32 +96,37 @@ export default function Writing() {
                         group-hover:translate-x-0.5
                         group-hover:-translate-y-0.5
                       "
-                    />
-                  </div>
+                      />
+                    </div>
 
-                  <CardTitle
-                    className="
+                    <CardTitle
+                      className="
                       leading-snug
                       transition-colors duration-300
                       group-hover:text-primary
                     "
-                  >
-                    {article.title}
-                  </CardTitle>
+                    >
+                      {article.title}
+                    </CardTitle>
 
-                  <CardDescription className="line-clamp-3">{article.excerpt}</CardDescription>
-                </CardHeader>
+                    <CardDescription className="line-clamp-3">{article.excerpt}</CardDescription>
+                  </CardHeader>
 
-                <CardContent>
-                  <div className="flex items-center gap-3 font-mono text-xs text-muted-foreground">
-                    <span>{article.date}</span>
-                    <span>•</span>
-                    <span>{article.readTime}</span>
-                  </div>
-                </CardContent>
-              </Card>
-            </motion.a>
-          ))}
+                  <CardContent>
+                    <div className="flex items-center gap-3 font-mono text-xs text-muted-foreground">
+                      <span>{article.date}</span>
+                      <span>•</span>
+                      <span>{article.readTime}</span>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.a>
+            ))
+          ) : (
+            <motion.div variants={containerVariants} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease: "easeOut" }} className="col-span-full h-full flex justify-center">
+              <WorkingInProgress />
+            </motion.div>
+          )}
         </motion.div>
       </div>
     </section>

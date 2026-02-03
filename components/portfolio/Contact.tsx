@@ -45,7 +45,7 @@ export default function Contact() {
               {socialLinks.map(({ icon: Icon, href, label }) => (
                 <motion.div key={label} whileHover={{ y: -2 }} transition={{ duration: 0.2 }}>
                   <Button variant="default" size="icon" asChild className="rounded-xl bg-background/70 backdrop-blur-md text-foreground hover:text-primary shadow-md">
-                    <a href={href} aria-label={label}>
+                    <a href={href} aria-label={label} target="_blank" rel="noopener noreferrer">
                       <Icon className="h-5 w-5" />
                     </a>
                   </Button>
