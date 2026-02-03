@@ -1,5 +1,4 @@
-import { motion } from "framer-motion";
-import { ExternalLink, Github } from "lucide-react";
+import { ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { IconBrandGithub } from "@tabler/icons-react";
@@ -8,32 +7,32 @@ import { MotionWrapper } from "../ui/motion-wrapper";
 
 const projects = [
   {
-    title: "E-Commerce Platform",
-    description: "High-performance marketplace handling 10k+ daily transactions with real-time inventory management and automated fulfillment integration.",
-    problem: "Legacy system couldn't scale beyond 1k daily orders",
-    solution: "Rebuilt with event-driven architecture and optimized database queries",
-    impact: "10x throughput, 60% reduction in page load times",
-    stack: ["Next.js", "PostgreSQL", "Redis", "Stripe", "AWS"],
+    title: "Super App Platform",
+    description: "High-performance super app platform handling 70k+ daily active users with PPOB services, real-time notifications, seamless payment integration, video streaming, and chat features.",
+    problem: "Legacy system couldn't scale with growing user base and high severity security issues occurs.",
+    solution: "Optimize backend architecture and enhance security protocols.",
+    impact: "Achieved 96.9% uptime and 50% faster load times, improving user retention by 30%. More reliable and secure platform.",
+    stack: ["Express", "PostgreSQL", "Redis", "BullMQ", "Socket.IO", "RTMP for live streaming"],
     link: "#",
     github: "#",
   },
   {
-    title: "Analytics Dashboard",
-    description: "Real-time analytics platform processing millions of events daily with custom visualization engine and anomaly detection.",
-    problem: "Teams lacked visibility into product metrics",
-    solution: "Built streaming pipeline with interactive dashboards",
-    impact: "Reduced decision-making time from days to minutes",
-    stack: ["React", "TypeScript", "ClickHouse", "WebSocket", "D3.js"],
-    link: "#",
+    title: "Pluto Koi Landing Page and Dashboard",
+    description: "Redesigned landing page and developed user dashboard for Pluto Koi, a Shiro Utsuri's Koi Breeding Centre, implemented an intuitive design and seamless navigation.",
+    problem: "Company lacked online platform for its growing customer base",
+    solution: "Created a user-friendly website and dashboard to manage and join an auction event, showcase products, and provide company information.",
+    impact: "Increased user engagement by 40% and boosted online inquiries by 25%.",
+    stack: ["Next.js", "Express", "MongoDB", "Socket.IO", "NGINX", "Vercel"],
+    link: "https://plutokoi.com",
     github: "#",
   },
   {
-    title: "Developer Tooling",
-    description: "Internal CLI and API toolkit that standardized deployment workflows across 50+ microservices.",
-    problem: "Inconsistent deployment practices causing incidents",
-    solution: "Unified toolchain with built-in validation and rollback",
-    impact: "90% reduction in deployment-related incidents",
-    stack: ["Go", "gRPC", "Docker", "Kubernetes", "Terraform"],
+    title: "Adaptive Bitrate Implementation on Video Streaming Service",
+    description: "Implemented adaptive bitrate streaming for a video platform, enhancing user experience by dynamically adjusting video quality based on network conditions and device capabilities.",
+    problem: "Inconsistent video playback quality leading to user dissatisfaction and increased buffering times.",
+    solution: "Developed an adaptive bitrate streaming solution using HLS and DASH protocols that could adjust bitrate between 480P to 720P in real-time.",
+    impact: "Increased user satisfaction by 35% and reduced buffering times by 50%, leading to longer viewing sessions.",
+    stack: ["FFmpeg", "Node.js", "HLS", "DASH"],
     link: "#",
     github: "#",
   },
