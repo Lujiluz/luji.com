@@ -32,18 +32,10 @@ export function WorkingInProgress({ className }: WorkingInProgressProps) {
       />
 
       {/* indicator */}
-      <motion.span className="relative flex h-2.5 w-2.5" aria-hidden>
-        <span className="absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-30" />
-        <motion.span
-          className="relative inline-flex h-2.5 w-2.5 rounded-full bg-emerald-400"
-          animate={{ scale: [1, 1.4, 1] }}
-          transition={{
-            duration: 1.6,
-            repeat: Infinity,
-            ease: "easeInOut",
-          }}
-        />
-      </motion.span>
+      <span className="relative flex h-2.5 w-2.5">
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[hsl(var(--accent))] opacity-75"></span>
+        <span className="relative inline-flex rounded-full h-2 w-2 bg-[hsl(var(--accent))]"></span>
+      </span>
 
       {/* text */}
       <div className="flex flex-col">
