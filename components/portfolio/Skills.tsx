@@ -45,6 +45,7 @@ const levelVariants: Record<string, "default" | "secondary" | "glass" | "outline
   Expert: "glass",
   Advanced: "outline",
   Intermediate: "secondary",
+  Beginner: "secondary"
 };
 
 export default function Skills() {
