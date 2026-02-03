@@ -10,6 +10,7 @@ const skillCategories = [
       { name: "React / Next.js", level: "Intermediate" },
       { name: "Tailwind CSS", level: "Intermediate" },
       { name: "shadcn/ui", level: "Intermediate" },
+      { name: "Framer Motion", level: "Beginner" },
     ],
   },
   {
@@ -33,7 +34,6 @@ const skillCategories = [
     skills: [
       { name: "GIT", level: "Advanced" },
       { name: "VPS Deployment", level: "Intermediate" },
-      { name: "Terraform", level: "Intermediate" },
       { name: "Monitoring (Grafana, Loki, Uptime Kuma)", level: "Intermediate" },
       { name: "CI/CD (Jenkins)", level: "Beginner" },
       { name: "Docker / Kubernetes", level: "Beginner" },
