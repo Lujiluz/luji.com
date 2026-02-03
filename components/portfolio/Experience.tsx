@@ -6,25 +6,29 @@ import { Separator } from "../ui/separator";
 
 const experiences = [
   {
-    role: "Senior Full-Stack Developer",
-    company: "Tech Company",
-    period: "2022 — Present",
-    description: "Leading development of core platform features, mentoring junior developers, and driving technical decisions for a product serving 500k+ users.",
-    highlights: ["Architected microservices migration reducing deployment time by 80%", "Led team of 5 engineers on critical revenue features", "Established testing standards improving coverage from 40% to 85%"],
+    role: "Backend Developer",
+    company: "PT. Kreasindo Karya Abadi",
+    period: "2024 — Present",
+    description: "Develop and maintain backend services for a high-traffic super app platform and other projects, focusing on scalability, security, and performance optimization using Express, PostgreSQL, and many more.",
+    highlights: [
+      "Optimized backend architecture to handle 70k+ daily active users, achieving 96.9% uptime and 50% faster load times",
+      "Implemented adaptive bitrate streaming solution, increasing user satisfaction by 35% and reducing buffering times by 50%",
+      "Collaborated with cross-functional teams to deliver user-friendly web applications, boosting user engagement by 40%",
+    ],
   },
   {
-    role: "Full-Stack Developer",
-    company: "Growing Startup",
-    period: "2020 — 2022",
-    description: "Built and scaled web applications from MVP to production, working closely with product and design teams.",
-    highlights: ["Developed real-time collaboration features using WebSockets", "Optimized database queries reducing API latency by 70%", "Implemented CI/CD pipeline automating 100% of deployments"],
+    role: "Studi Independen - Full Stack Developer",
+    company: "PT. Global Investasi (LearningX)",
+    period: "February, 2024 — June, 2024",
+    description: "Learned and implemented full stack development concepts by building a project management application using Python with Flask and Jinja2 template engine.",
+    highlights: ["Developed user authentication and authorization system", "Implemented CRUD operations for project and task management", "Deployed application on Glitch with MongoDB database integration"],
   },
   {
-    role: "Frontend Developer",
-    company: "Digital Agency",
-    period: "2018 — 2020",
-    description: "Created responsive web experiences for clients across fintech, healthcare, and e-commerce sectors.",
-    highlights: ["Delivered 15+ client projects on time and within budget", "Introduced component library reducing development time by 40%", "Mentored 2 junior developers"],
+    role: "Bachelor Degree in Information Technology",
+    university: "Universitas Insan Pembangunan Indonesia",
+    period: "2021 — 2025",
+    description: "Pursuing a Bachelor's degree in Information Technology, focusing on software development, data structures, algorithms, and system design.",
+    highlights: ["Maintained a GPA of 3.54/4.0 while actively working as a Backend Developer", "Completed coursework in advanced programming, database management, and web development"],
   },
 ];
 
@@ -62,7 +66,7 @@ export default function Experience() {
               const isLeft = index % 2 === 0;
 
               return (
-                <motion.div key={exp.role + exp.company} variants={itemVariants} className="relative md:grid md:grid-cols-2">
+                <motion.div key={exp.role + (exp.company ?? exp.university)} variants={itemVariants} className="relative md:grid md:grid-cols-2">
                   {/* Timeline dot */}
                   <div className="absolute left-1/2 top-6 hidden -translate-x-1/2 md:block">
                     <div className="h-3 w-3 rounded-full bg-primary ring-4 ring-background" />
@@ -84,7 +88,7 @@ export default function Experience() {
                         <div className={`flex items-start justify-between gap-4 ${isLeft ? "md:flex-row-reverse" : ""}`}>
                           <div>
                             <CardTitle className="text-lg">{exp.role}</CardTitle>
-                            <CardDescription>{exp.company}</CardDescription>
+                            <CardDescription>{exp.company ?? exp.university}</CardDescription>
                           </div>
                           <span className="font-mono text-xs text-muted-foreground whitespace-nowrap">{exp.period}</span>
                         </div>
