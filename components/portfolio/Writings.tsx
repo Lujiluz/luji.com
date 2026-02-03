@@ -123,7 +123,14 @@ export default function Writing() {
               </motion.a>
             ))
           ) : (
-            <motion.div variants={containerVariants} initial={{ opacity: 0, y: 16 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, ease: "easeOut" }} className="col-span-full h-full flex justify-center">
+            <motion.div
+              variants={containerVariants}
+              initial={{ opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true }}
+              transition={{ duration: 0.5, ease: "easeOut" }}
+              className="col-span-full h-full flex justify-center"
+            >
               <WorkingInProgress />
             </motion.div>
           )}

@@ -57,6 +57,9 @@ export function FloatingDock({ items, className, children }: { items: DockItem[]
   /* ------------------------------ MOBILE ------------------------------ */
   const [mobileExpanded, setMobileExpanded] = useState(false);
   const [activeIndex, setActiveIndex] = useState(0);
+  // ✅ NEW: State buat nentuin arah animasi (1 = down/next, -1 = up/prev)
+  const [direction, setDirection] = useState(1);
+  const activeIndexRef = useRef(0); // Ref buat track index tanpa trigger re-render observer
   const dockRef = useRef<HTMLDivElement>(null);
 
   /* ---------------------- DESKTOP HIDE ON SCROLL ----------------------- */
@@ -73,25 +76,39 @@ export function FloatingDock({ items, className, children }: { items: DockItem[]
 
   /* --------------------- MOBILE ACTIVE SECTION --------------------- */
   useEffect(() => {
+    // Kalo desktop (canHover), gak usah jalanin logic ini biar hemat resource
     if (canHover) return;
+
     const sections = Array.from(document.querySelectorAll<HTMLElement>("[data-dock]"));
     if (!sections.length) return;
 
     const observer = new IntersectionObserver(
       (entries) => {
-        let bestId: string | null = null;
-        entries.forEach((entry) => {
-          if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
-            bestId = entry.target.id;
+        // Kita cari entry mana yang lagi "intersecting" (masuk area pantau)
+        const visibleEntry = entries.find((entry) => entry.isIntersecting);
+
+        if (visibleEntry) {
+          const targetId = visibleEntry.target.id;
+          const newIndex = items.findIndex((i) => i.href === `#${targetId}`);
+
+          if (newIndex !== -1 && newIndex !== activeIndexRef.current) {
+            const newDirection = newIndex > activeIndexRef.current ? 1 : -1;
+            setDirection(newDirection);
+            setActiveIndex(newIndex);
+            activeIndexRef.current = newIndex;
           }
-        });
-        if (bestId) {
-          const index = items.findIndex((i) => i.href === `#${bestId}`);
-          if (index !== -1) setActiveIndex(index);
         }
       },
-      { threshold: [0.1, 0.5, 0.9], rootMargin: "-40% 0px -40% 0px" },
+      {
+        // Treshold 0 artinya "asal nyentuh dikit aja langsung lapor"
+        threshold: 0,
+        // RootMargin ini kuncinya!
+        // "-45% 0px -45% 0px" artinya kita persempit area pandang jadi cuma GARIS TIPIS DI TENGAH LAYAR (10% tinggi layar).
+        // Jadi section dianggap aktif CUMA kalau dia ngelewatin tengah layar.
+        rootMargin: "-45% 0px -45% 0px",
+      },
     );
+
     sections.forEach((s) => observer.observe(s));
     return () => observer.disconnect();
   }, [items, canHover]);
@@ -149,8 +166,8 @@ export function FloatingDock({ items, className, children }: { items: DockItem[]
                   flex items-center gap-4
                   rounded-2xl
                   /* --- FIX LIQUID GLASS --- */
-                  bg-white/10 dark:bg-black/10       /* Opacity turun drastis (40 -> 10) biar tembus pandang */
-                  backdrop-blur-md                   /* Blur turun (xl -> md) biar gradient belakang keliatan */
+                  bg-white/10 dark:bg-black/10       
+                  backdrop-blur-md                   
                   border border-white/20 dark:border-white/10
                   shadow-lg dark:shadow-black/20
                   h-16 px-4
@@ -180,8 +197,8 @@ export function FloatingDock({ items, className, children }: { items: DockItem[]
                 className={cn(
                   "relative flex items-center overflow-hidden",
                   /* --- FIX LIQUID GLASS MOBILE --- */
-                  "bg-white/20 dark:bg-black/20" /* Sedikit lebih tebel dari desktop (20) biar bacaan aman */,
-                  "backdrop-blur-lg" /* Blur LG (bukan XL) biar tetep soft tapi ga berkabut */,
+                  "bg-white/20 dark:bg-black/20",
+                  "backdrop-blur-lg",
                   "border border-white/20 dark:border-white/10",
                   "shadow-2xl",
                   mobileExpanded ? "px-0 h-16 w-[calc(100vw-40px)] max-w-[400px]" : "px-2 h-14 w-auto",
@@ -201,13 +218,29 @@ export function FloatingDock({ items, className, children }: { items: DockItem[]
                     >
                       <button onClick={() => setMobileExpanded(true)} className="relative flex items-center justify-center h-10 w-10 active:scale-90 transition-transform">
                         <motion.div layout className="relative w-6 h-6">
-                          <AnimatePresence mode="wait">
+                          <AnimatePresence mode="popLayout" custom={direction}>
+                            {/* ✅ ANIMATION FIX: Gunakan direction state */}
                             <motion.div
                               key={activeIndex}
-                              initial={{ y: 10, opacity: 0 }}
-                              animate={{ y: 0, opacity: 1 }}
-                              exit={{ y: -10, opacity: 0 }}
-                              transition={{ duration: 0.15 }}
+                              variants={{
+                                enter: (dir: number) => ({
+                                  y: dir * 12, // Kalau dir 1 (turun), masuk dari bawah (+12). Kalau -1, dari atas (-12)
+                                  opacity: 0,
+                                }),
+                                center: {
+                                  y: 0,
+                                  opacity: 1,
+                                },
+                                exit: (dir: number) => ({
+                                  y: dir * -12, // Kalau dir 1 (turun), keluar ke atas (-12). Kalau -1, ke bawah (+12)
+                                  opacity: 0,
+                                }),
+                              }}
+                              initial="enter"
+                              animate="center"
+                              exit="exit"
+                              custom={direction} // Pass direction ke variants
+                              transition={{ duration: 0.25, ease: "easeInOut" }}
                               className="absolute inset-0 flex items-center justify-center"
                             >
                               {items[activeIndex]?.icon}
@@ -248,7 +281,6 @@ export function FloatingDock({ items, className, children }: { items: DockItem[]
                             onClick={() => setMobileExpanded(false)}
                             className="
                                 flex h-10 w-10 shrink-0 items-center justify-center rounded-full 
-                                /* Button background slightly lighter/darker than dock */
                                 bg-white/50 dark:bg-white/10
                                 active:scale-90 transition-transform
                             "
