@@ -5,12 +5,10 @@ import { Mail } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { IconBrandGithub, IconBrandLinkedin, IconBrandX } from "@tabler/icons-react";
 import { WavyBackground } from "../ui/wavy-background";
-// import { MovingBorder } from "@/components/ui/moving-border";
 
 const socialLinks = [
-  { icon: IconBrandGithub, href: "#", label: "GitHub" },
-  { icon: IconBrandLinkedin, href: "#", label: "LinkedIn" },
-  { icon: IconBrandX, href: "#", label: "Twitter" },
+  { icon: IconBrandGithub, href: "https://github.com/Lujiluz", label: "GitHub" },
+  { icon: IconBrandLinkedin, href: "https://www.linkedin.com/in/luji-space/", label: "LinkedIn" },
 ];
 
 export default function Contact() {
@@ -28,7 +26,7 @@ export default function Contact() {
             {/* Primary CTA */}
             <motion.div whileHover={{ scale: 1.03 }} whileTap={{ scale: 0.97 }} transition={{ type: "spring", stiffness: 300, damping: 20 }} className="inline-block">
               <a
-                href="mailto:hello@example.com"
+                href="mailto:zlfjrii@gmail.com"
                 className="
                 flex items-center gap-3
                 rounded-xl px-8 py-4
@@ -38,7 +36,7 @@ export default function Contact() {
               "
               >
                 <Mail className="h-5 w-5" />
-                hello@example.com
+                zlfjrii@gmail.com
               </a>
             </motion.div>
 
