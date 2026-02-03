@@ -51,46 +51,58 @@ export default function Projects() {
           {projects.map((project, index) => (
             <MotionWrapper key={project.title} initial={{ opacity: 0, y: 30 }} whileInView={{ opacity: 1, y: 0 }} viewport={{ once: true }} transition={{ duration: 0.5, delay: index * 0.1 }}>
               <SpotlightCard className="p-6 md:p-8">
-                <div className="grid md:grid-cols-3 gap-6 md:gap-8">
-                  <div className="md:col-span-2">
-                    <div className="flex items-start justify-between mb-4">
-                      <h3 className="text-xl font-semibold">{project.title}</h3>
-                      <div className="flex items-center gap-2">
-                        <Button variant="ghost" size="icon" asChild className="h-8 w-8">
+                <div className="grid md:grid-cols-3 gap-8">
+                  {/* Left Column: Main Info */}
+                  <div className="md:col-span-2 flex flex-col h-full">
+                    <div className="flex items-start justify-between mb-4 gap-4">
+                      <h3 className="text-xl font-semibold leading-tight">{project.title}</h3>
+                      <div className="flex items-center gap-2 shrink-0">
+                        <Button variant="ghost" size="icon" asChild className="h-8 w-8 text-muted-foreground hover:text-foreground">
                           <a href={project.github} aria-label="View source">
                             <IconBrandGithub className="w-4 h-4" />
                           </a>
                         </Button>
-                        <Button variant="ghost" size="icon" asChild className="h-8 w-8">
+                        <Button variant="ghost" size="icon" asChild className="h-8 w-8 text-muted-foreground hover:text-foreground">
                           <a href={project.link} aria-label="View project">
                             <ExternalLink className="w-4 h-4" />
                           </a>
                         </Button>
                       </div>
                     </div>
-                    <p className="text-muted-foreground mb-6">{project.description}</p>
 
-                    <div className="flex flex-wrap gap-2">
+                    <p className="text-muted-foreground mb-6 text-sm md:text-base leading-relaxed">{project.description}</p>
+
+                    {/* Stack Badges - Pushed to bottom of flex col if needed */}
+                    <div className="flex flex-wrap gap-2 mt-auto">
                       {project.stack.map((tech) => (
-                        <Badge key={tech} variant="secondary" className="font-mono text-xs">
+                        <Badge key={tech} variant="secondary" className="font-mono text-[10px] md:text-xs px-2 py-0.5">
                           {tech}
                         </Badge>
                       ))}
                     </div>
                   </div>
 
-                  <div className="space-y-4 md:border-l md:border-border md:pl-8">
+                  {/* Right Column: Problem/Solution/Impact */}
+                  {/* RESPONSIVE FIX: Border Top di Mobile, Border Left di Desktop */}
+                  <div
+                    className="
+                    space-y-4 
+                    border-t border-border/50 pt-6 mt-2 
+                    md:border-t-0 md:pt-0 md:mt-0 
+                    md:border-l md:border-border md:pl-8
+                  "
+                  >
                     <div>
                       <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">Problem</span>
-                      <p className="text-sm text-muted-foreground mt-1">{project.problem}</p>
+                      <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{project.problem}</p>
                     </div>
                     <div>
                       <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">Solution</span>
-                      <p className="text-sm text-muted-foreground mt-1">{project.solution}</p>
+                      <p className="text-sm text-muted-foreground mt-1 leading-relaxed">{project.solution}</p>
                     </div>
                     <div>
                       <span className="font-mono text-xs text-muted-foreground uppercase tracking-wider">Impact</span>
-                      <p className="text-sm text-accent font-medium mt-1">{project.impact}</p>
+                      <p className="text-sm text-accent font-medium mt-1 leading-relaxed">{project.impact}</p>
                     </div>
                   </div>
                 </div>
