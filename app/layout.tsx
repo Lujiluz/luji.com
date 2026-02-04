@@ -3,6 +3,7 @@ import "./globals.css";
 import { fontDisplay, fontMono, fontSans } from "./fonts";
 import { ThemeProvider } from "./providers/theme-provider";
 import LenisProvider from "./providers/lenis-provider";
+import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Luji | Portfolio",
@@ -21,6 +22,7 @@ export default function RootLayout({
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
         </ThemeProvider>
+        <Analytics />
       </body>
     </html>
   );
