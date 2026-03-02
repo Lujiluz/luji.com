@@ -27,7 +27,7 @@ export const Hero = () => {
 
           <MotionWrapper initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.2 }} className="mb-6">
             <h1 className="text-4xl md:text-5xl lg:text-6xl font-display font-semibold leading-tight tracking-tight text-foreground">
-              <TextGenerateEffect words="Full-Stack Developer building reliable, scalable systems" />
+              <TextGenerateEffect words="Full-Stack Developer building reliable, scalable systems" filter={false} />
             </h1>
           </MotionWrapper>
 

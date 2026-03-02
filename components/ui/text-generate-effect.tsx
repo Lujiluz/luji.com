@@ -1,46 +1,51 @@
 "use client";
-import { useEffect } from "react";
-import { motion, stagger, useAnimate } from "framer-motion";
+import { motion, Variants } from "framer-motion";
 import { cn } from "@/lib/utils";
 
 interface TextGenerateEffectProps {
   words: string;
   className?: string;
   filter?: boolean;
-  duration?: number;
 }
 
-export const TextGenerateEffect = ({ words, className, filter = true, duration = 0.5 }: TextGenerateEffectProps) => {
-  const [scope, animate] = useAnimate();
+export const TextGenerateEffect = ({ words, className, filter = false }: TextGenerateEffectProps) => {
   const wordsArray = words.split(" ");
 
-  useEffect(() => {
-    animate(
-      "span",
-      {
-        opacity: 1,
-        filter: filter ? "blur(0px)" : "none",
+  const containerVariants: Variants = {
+    hidden: { opacity: 0 },
+    show: {
+      opacity: 1,
+      transition: {
+        staggerChildren: 0.08,
       },
-      {
-        duration: duration,
-        delay: stagger(0.08),
-      },
-    );
-  }, [animate, duration, filter]);
+    },
+  };
+
+  const wordVariants: Variants = {
+    hidden: {
+      opacity: 0,
+      y: 10,
+      filter: filter ? "blur(10px)" : "none",
+    },
+    show: {
+      opacity: 1,
+      y: 0,
+      filter: filter ? "blur(0px)" : "none",
+      transition: { type: "spring", damping: 12, stiffness: 100 },
+    },
+  };
 
   return (
-    <motion.div ref={scope} className={cn("inline", className)}>
-      {wordsArray.map((word, idx) => (
-        <motion.span
-          key={word + idx}
-          className="opacity-0"
-          style={{
-            filter: filter ? "blur(10px)" : "none",
-          }}
-        >
-          {word}{" "}
-        </motion.span>
-      ))}
-    </motion.div>
+    <div className={cn("inline-block", className)}>
+      <span className="sr-only">{words}</span>
+
+      <motion.div variants={containerVariants} initial="hidden" animate="show" aria-hidden="true" className="inline">
+        {wordsArray.map((word, idx) => (
+          <motion.span key={word + idx} variants={wordVariants} className="inline-block mr-[0.25em]">
+            {word}
+          </motion.span>
+        ))}
+      </motion.div>
+    </div>
   );
 };

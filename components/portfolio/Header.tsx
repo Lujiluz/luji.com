@@ -1,10 +1,14 @@
 "use client";
 
-import { FloatingDock } from "@/components/ui/floating-dock";
 import { ThemeToggle } from "@/components/ui/theme-toggle";
-import { IconBrandGithub, IconHome } from "@tabler/icons-react";
-import { cn } from "@/lib/utils";
+import { IconHome } from "@tabler/icons-react";
 import { Briefcase, Code2, FileTextIcon, MailIcon, Sparkles } from "lucide-react";
+import dynamic from "next/dynamic";
+
+// Ini rahasianya! Load FloatingDock HANYA di sisi client setelah browser senggang
+const FloatingDock = dynamic(() => import("@/components/ui/floating-dock").then((mod) => mod.FloatingDock), {
+  ssr: false,
+});
 
 const Header = () => {
   const links = [
