@@ -8,14 +8,25 @@ import { ArrowDown } from "lucide-react";
 import { Button } from "../ui/button";
 import { MotionWrapper } from "../ui/motion-wrapper";
 import StaggeredButton from "../ui/staggered-button";
+import { useSplash } from "@/contexts/SplashContext";
 
 export const Hero = () => {
+  const { isSplashFinished } = useSplash()
+  
   return (
     <section className="relative min-h-screen flex items-center justify-center overflow-hidden" id="home" data-dock>
       <Spotlight className="-top-40 left-0 md:-top-20 md:left-60" fill="hsl(var(--accent))" />
       <div className="section-container relative z-10">
         <div className="max-w-3xl">
-          <MotionWrapper initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, delay: 0.1 }} className="mb-6">
+          <MotionWrapper
+            initial={{ opacity: 0, y: 20 }}
+            animate={{
+              opacity: isSplashFinished ? 1 : 0,
+              y: isSplashFinished ? 0 : 30,
+            }}
+            transition={{ duration: 0.6, delay: 0.1 }}
+            className="mb-6"
+          >
             <Badge variant="secondary" className="text-[hsl(var(--accent))] bg-[hsl(var(--accent))]/20 border-[hsl(var(--accent))]/20">
               <span className="relative flex h-2 w-2 mr-2">
                 <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[hsl(var(--accent))] opacity-75"></span>
