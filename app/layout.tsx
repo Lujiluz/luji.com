@@ -7,63 +7,55 @@ import { Analytics } from "@vercel/analytics/next";
 
 export const metadata: Metadata = {
   title: "Zulfajri (Luji) | Backend & Full-Stack Developer",
-  description: "Backend-focused Web Developer specializing in scalable systems (100K+ users), AI-powered media processing, and high-performance architecture.",
+  description: "Backend-focused Web Developer with experience in building scalable systems (100K+ users) and AI-driven microservices.",
   metadataBase: new URL(process.env.NEXT_PUBLIC_BASE_URL || "https://luji-space.vercel.app"),
   alternates: { canonical: "/" },
-  openGraph: {
-    title: "Zulfajri (Luji) | Backend & Full-Stack Developer",
-    description: "Expertise in Node.js, Golang, and Python. Proven track record in optimizing API performance and reducing infrastructure costs.",
-    url: "https://luji-space.vercel.app",
-    siteName: "Luji Space",
-    images: [
-      {
-        url: "/og-image.png",
-        width: 1200,
-        height: 630,
-      },
-    ],
-    locale: "en_US",
-    type: "website",
-  },
 };
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   const jsonLd = {
     "@context": "https://schema.org",
-    "@type": "Person",
-    name: "Luji",
-    alternateName: "Lj.",
-    url: "https://luji-space.vercel.app",
-    image: "https://luji-space.vercel.app/og-image.png",
-    sameAs: ["https://linkedin.com/in/luji-space", "https://github.com/Lujiluz", "https://www.instagram.com/luji.archive"],
-    jobTitle: "Backend Developer | Full-Stack Web Developer",
-    description: "Backend-focused developer with 3 years of experience in building scalable systems and AI-driven microservices.",
-    knowsAbout: [
-      "Backend Engineering",
-      "Full-Stack Web Development",
-      "Node.js (Express & NestJS)",
-      "Golang (GIN)",
-      "Python (FastAPI & Flask)",
-      "System Optimization",
-      "Microservices Architecture",
-      "HLS Video Streaming",
-      "PostgreSQL & MongoDB",
+    "@graph": [
+      {
+        "@type": "Person",
+        "@id": "https://luji-space.vercel.app/#person",
+        name: "Zulfajri",
+        alternateName: "Luji",
+        url: "https://luji-space.vercel.app",
+        image: "https://luji-space.vercel.app/og-image.png",
+        jobTitle: "Backend Developer",
+        description: "Backend-focused developer with 3 years of experience in building scalable REST APIs and HLS video streaming.",
+        sameAs: ["https://linkedin.com/in/luji-space", "https://github.com/Lujiluz", "https://www.instagram.com/luji.archive"],
+        alumniOf: {
+          "@type": "CollegeOrUniversity",
+          name: "Universitas Insan Pembangunan Indonesia",
+        },
+        knowsAbout: ["Backend Engineering", "Next.js", "Golang", "PostgreSQL", "HLS Video Streaming", "Microservices"],
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://luji-space.vercel.app/#website",
+        url: "https://luji-space.vercel.app",
+        name: "Luji Space",
+        // Nge-link ke data Person di atas
+        publisher: { "@id": "https://luji-space.vercel.app/#person" },
+      },
+      {
+        "@type": "ProfilePage",
+        "@id": "https://luji-space.vercel.app/#profile",
+        url: "https://luji-space.vercel.app",
+        // Halaman ini profilnya si Person
+        mainEntity: { "@id": "https://luji-space.vercel.app/#person" },
+      },
     ],
-    alumniOf: {
-      "@type": "CollegeOrUniversity",
-      name: "Universitas Insan Pembangunan Indonesia",
-    },
   };
 
   return (
     <html lang="en" suppressHydrationWarning>
-      <body className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable} antialiased`}>
-        {/* JSON-LD Script */}
+      <head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
+      </head>
+      <body className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable} antialiased`}>
         <LenisProvider />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
