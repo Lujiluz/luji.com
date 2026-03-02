@@ -55,7 +55,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <head>
         <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       </head>
-      <body className={`${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable} antialiased transition-colors duration-500`}>
+      <body className={`transition-colors duration-500 ${fontSans.variable} ${fontDisplay.variable} ${fontMono.variable} antialiased`}>
         <LenisProvider />
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
           {children}
